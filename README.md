@@ -10,3 +10,6 @@ For a society to be able to be registered, the job must be inserted into `societ
 
 ## Billing
 
+A billing system is functional only with TPZ-Banking.
+
+When a society (job), creates a bill on a player, the bills must be paid directly from the Bank and not from a Menu like other frameworks.
