@@ -1,2 +1,7 @@
 # tpz_society
-TPZ-CORE Society
+
+# Important Information
+
+## Ledger & Salaries
+
+For a society to be able to be registered, the job must be inserted into `society` database table, otherwise Ledger and Salary System in general, won't be functional, even if the option is enabled from the configuration file.
