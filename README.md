@@ -1,4 +1,8 @@
-# tpz_society
+# TPZ-CORE Society
+
+## Requirements
+
+TPZ Menu Base : https://github.com/TPZ-CORE/tpz_menu_base
 
 # Important Information
 
