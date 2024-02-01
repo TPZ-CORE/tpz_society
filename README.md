@@ -4,6 +4,8 @@
 
 TPZ Menu Base : https://github.com/TPZ-CORE/tpz_menu_base
 
+TPZ Inputs : https://github.com/TPZ-CORE/tpz_inputs
+
 # Important Information
 
 ## Ledger & Salaries
