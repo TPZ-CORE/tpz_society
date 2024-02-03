@@ -5,7 +5,9 @@
 1. TPZ-Core: https://github.com/TPZ-CORE/tpz_core
 2. TPZ-Characters: https://github.com/TPZ-CORE/tpz_characters
 3. TPZ-Inventory: https://github.com/TPZ-CORE/tpz_inventory
+4. TPZ-Menu-Base: https://github.com/TPZ-CORE/tpz_menu_base
 4. TPZ-Notify: https://github.com/TPZ-CORE/tpz_notify
+5. TPZ-Inputs: https://github.com/TPZ-CORE/tpz_inputs
 
 # Installation
 
