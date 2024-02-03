@@ -6,6 +6,12 @@ TPZ Menu Base : https://github.com/TPZ-CORE/tpz_menu_base
 
 TPZ Inputs : https://github.com/TPZ-CORE/tpz_inputs
 
+# Installation
+
+1. When opening the zip file, open `tpz_society-main` directory folder and inside there will be another directory folder which is called as `tpz_society`, this directory folder is the one that should be exported to your resources (The folder which contains `fxmanifest.lua`).
+
+2. Add `ensure tpz_society` after `tpz_core` and its requirements in the resources.cfg or server.cfg, depends where your scripts are located.
+
 # Important Information
 
 ## Ledger & Salaries
