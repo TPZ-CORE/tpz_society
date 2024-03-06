@@ -127,6 +127,89 @@ Config.Societies = {
         },
 
     },
+
+    ['medic'] = { -- The job name.
+        
+        JobLabel = "Medical Department",
+
+        InventoryContainerTitle = "Medical",
+
+        -- The following coords is where the menu, blips and inventory containers are located.
+        -- All the players with this job and allowed grades will be able to open the inventory container.
+        -- The container ID can be found from `containers` table from database.
+
+        -- (!) Set containerId to false if you don't want to open any storage ( ex: containerId = false ).
+        Locations = { 
+            [1] = { Coords = { x = -282.282, y = 817.8605, z = 119.38 }, InventoryContainer = { grades = {0, 1}, containerId = 2 } },
+            [2] = { Coords = { x = 1372.310, y = -1305.61, z = 77.970 }, InventoryContainer = { grades = {0, 1}, containerId = 2 } },
+            [3] = { Coords = { x = 2730.585, y = -1229.20, z = 50.370 }, InventoryContainer = { grades = {0, 1}, containerId = 2 } },
+            [4] = { Coords = { x = -1803.17, y = -432.625, z = 158.82 }, InventoryContainer = { grades = {0, 1}, containerId = 2 } },
+        },
+
+        -- If ActiveDuty set to false, DutyLocations will not be activated 
+        -- and Config.ToggleDutyOnPlayerJoin will also not toggle the player's job to off-duty if enabled.
+        ActiveDuty = true,
+
+        DutyLocations = {
+            [1] = { Coords = { x = -291.545, y = 816.6009, z = 119.38 } }, -- Valentine
+            [2] = { Coords = { x = 1368.716, y = -1306.76, z = 76.970 } }, -- Rhodes
+            [3] = { Coords = { x = 2726.695, y = -1231.99, z = 50.366 } }, -- Saint Denis
+            [4] = { Coords = { x = -1806.84, y = -432.444, z = 158.83 } }, -- Strawberry
+        },
+
+        BlipData = {
+            Enabled = false,
+            Sprite = -1739686743,
+            Title = "Medical Department",
+        },
+        
+        Marker = { -- If this is enabled, a circular marker will be displayed when close to the warehouse actions.
+            Enabled = true,
+            RGBA    = {r = 240, g = 230, b = 140, a = 50},
+            DisplayDistance = 5.0,
+        },
+
+        ActionDistance = 1.5,
+
+        -- Set it to false if you don't want the players with this job to use billing by doing /bill <id> <amount> 
+        -- Billing will not be functional if the society is not registered.
+        Billing = true, 
+    
+        -- Set it to false if you don't want the players to receive any salary from the job (TPZ-Banking Support)
+        -- The cost is the reward for the player after giving the document to the bank and also the amount which will take from ledger.
+        -- If ledger has not enough to pay for a salary, no item will be given.
+        -- (!) Time does not count for off-duty players.
+        Salary = { 
+            Enabled = true,
+
+            -- Set to false if you are using TPZ-Banking.
+            Item    = false, 
+
+            -- Salary Cost based on the player's grade.
+            -- If a player has a grade which is missing from below, the player will receive the same
+            -- reward as [0] grade which is the default.
+            -- That means, if you don't want a boss to be paid, you should add the grade with 0 cost.
+            Grades = { 
+                [0] = { Salary = 3 },
+                [1] = { Salary = 5 },
+            },
+        }, 
+        
+        Webhooking = { 
+            Enabled = false, -- Set it to false if you dont use any webhook, otherwise all the society actions will be sent to the webhook url.
+            Url = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", 
+            Color = 10038562,
+        },
+
+        BossGrade      = 1, -- The boss grade which will be able to manage all society actions. 
+        RecruitGrade   = 0, -- The recruit grade when someone is hiring a player to the job.
+
+        GradesList      = {
+            [0] = "Recruit",
+            [1] = "Boss",
+        },
+
+    },
 }
 
 -----------------------------------------------------------
