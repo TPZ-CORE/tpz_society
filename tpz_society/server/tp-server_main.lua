@@ -310,8 +310,8 @@ AddEventHandler("tpz_society:hireSelectedSourceId", function(job, username, sour
 end)
 
 RegisterServerEvent("tpz_society:addJobLedgerMoney")
-AddEventHandler("tpz_society:addJobLedgerMoney", function(job, amount)
-    local _source = source
+AddEventHandler("tpz_society:addJobLedgerMoney", function(targetSource, job, amount)
+    local _source = targetSource
     local xPlayer = TPZ.GetPlayer(_source)
     local charidentifier = xPlayer.getCharacterIdentifier()
 
