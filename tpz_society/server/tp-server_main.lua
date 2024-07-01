@@ -309,6 +309,26 @@ AddEventHandler("tpz_society:hireSelectedSourceId", function(job, username, sour
 
 end)
 
+RegisterServerEvent("tpz_society:addJobLedgerMoney")
+AddEventHandler("tpz_society:addJobLedgerMoney", function(job, amount)
+    local _source = source
+    local xPlayer = TPZ.GetPlayer(_source)
+    local charidentifier = xPlayer.getCharacterIdentifier()
+
+    if job == nil or Societies[job] == nil then
+        print('(!) There was an injection attempt "tpz_society:addJobLedgerMoney" which was triggered by the following source and steam name: ' .. _source .. " " .. GetPlayerName(_source))
+        return
+    end
+
+    local money = xPlayer.getAccount(0)
+
+    if money < amount then
+        return
+    end
+
+    UpdateSocietyLedger(job, 'ADD', amount)
+    xPlayer.removeAccount(0, amount)
+end)
 
 RegisterServerEvent("tpz_society:depositJobLedger")
 AddEventHandler("tpz_society:depositJobLedger", function(job, amount)
