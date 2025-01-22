@@ -7,7 +7,7 @@ TriggerEvent("getTPZCore", function(cb) TPZ = cb end)
 --[[ Callbacks  ]]--
 -----------------------------------------------------------
 
-exports.tpz_core:rServerAPI().addNewCallBack("tpz_society:getBills", function(source, cb)
+exports.tpz_core:server().addNewCallBack("tpz_society:getBills", function(source, cb)
 	local _source         = source
     local xPlayer         = TPZ.GetPlayer(_source)
 
@@ -48,12 +48,12 @@ exports.tpz_core:rServerAPI().addNewCallBack("tpz_society:getBills", function(so
 end)
 
 -- @parameter job : Required parameter for the following callback to check if Society is null or exists.
-exports.tpz_core:rServerAPI().addNewCallBack("tpz_society:isAllowedToCreateBill", function(source, cb, data)
+exports.tpz_core:server().addNewCallBack("tpz_society:isAllowedToCreateBill", function(source, cb, data)
 	cb(Societies[data.job] == nil)
 end)
 
 
-exports.tpz_core:rServerAPI().addNewCallBack("tpz_society:getEmployees", function(source, cb, data)
+exports.tpz_core:server().addNewCallBack("tpz_society:getEmployees", function(source, cb, data)
 
 	local jobPlayerList = TPZ.GetJobPlayers(data.job)
 
