@@ -10,6 +10,8 @@ TriggerEvent("getTPZCore", function(cb) TPZ = cb end)
 
 -- The following event is triggered when player selects a character and Config.ToggleDutyOnPlayerJoin is true 
 -- and its society `ActiveDuty` is also true which toggles the player's job to off-duty automatically.
+-- (!) We dont need any Devtools / Injection protection, it is not something major
+-- to contain any protection.
 RegisterServerEvent('tpz_society:server:togglePlayerDutyOnJoin')
 AddEventHandler('tpz_society:server:togglePlayerDutyOnJoin', function()
   local _source  = source
@@ -24,6 +26,8 @@ AddEventHandler('tpz_society:server:togglePlayerDutyOnJoin', function()
 end)
 
 -- The following event is triggered when a player toggles the duty status to become off-duty or on-duty.
+-- (!) We dont need any Devtools / Injection protection, it is not something major
+-- to contain any protection.
 RegisterServerEvent('tpz_society:server:toggleDutyStatus')
 AddEventHandler('tpz_society:server:toggleDutyStatus', function()
   local _source  = source
