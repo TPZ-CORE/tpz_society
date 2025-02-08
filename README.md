@@ -23,6 +23,8 @@ For a society to be able to be registered, the job must be inserted into `societ
 
 (!) A society will be registered only after the script is restarted and not while server is running.
 
+When creating manually a container on `containers` database table, the `id` will be required for adding it on the Config.Societies where the job name is located! Make sure the container `name` parameter, is the same as the job name.
+
 ## Billing
 
 A billing system is functional only with TPZ-Banking.
