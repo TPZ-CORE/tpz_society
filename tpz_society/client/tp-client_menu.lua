@@ -149,12 +149,16 @@ function OpenSocietyEmployeesList()
             local count = 0 
     
             for _, player in pairs (cb) do
-                count = count + 1
-                table.insert(elements, { source = player.source, username = player.username, label = string.format(Locales['MANAGEMENT_MENU_EMPLOYEE'], count, player.username, player.grade), value = player.charidentifier, desc = "" })
+
+                if GetPlayerServerId(PlayerId()) ~= player.source then
+                    count = count + 1
+                    table.insert(elements, { source = player.source, username = player.username, label = string.format(Locales['MANAGEMENT_MENU_EMPLOYEE'], count, player.username, player.grade), value = player.charidentifier, desc = "" })
+                end
+                
             end
     
         end
-    
+
     
         table.insert(elements, { label = Locales['MANAGEMENT_MENU_HIRE'], value = "hire", desc = ""})
         table.insert(elements, { label = Locales['MANAGEMENT_MENU_BACK'], value = "backup", desc = ""})
@@ -334,7 +338,7 @@ end
 function OpenSocietyLedgerMenu()
 
     local PlayerData = GetPlayerData()
-    
+
     MenuData.CloseAll()
 
     local options = {
