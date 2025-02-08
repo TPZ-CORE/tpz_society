@@ -35,7 +35,8 @@ end)
 
 -- @parameter job : Required parameter for the following callback to check if Society is null or exists.
 exports.tpz_core:server().addNewCallBack("tpz_society:isAllowedToCreateBill", function(source, cb, data)
-	cb(Societies[data.job] == nil)
+	local Societies = GetSocieties()
+	return cb(Societies[data.job] == nil)
 end)
 
 
