@@ -20,15 +20,15 @@ exports.tpz_core:server().addNewCallBack("tpz_society:getBills", function(source
 		return cb({})
 	end
 
-		for _, res in pairs (Billing) do 
+	for _, res in pairs (Billing) do 
 
-			if tonumber(res.charidentifier) == tonumber(charidentifier) then
-				playerBills[res.id] = {}
-				playerBills[res.id] = res
-
-			end
+		if tonumber(res.charidentifier) == tonumber(charidentifier) then
+			playerBills[res.id] = {}
+			playerBills[res.id] = res
 
 		end
+
+	end
 
 	return cb(playerBills)
 end)
