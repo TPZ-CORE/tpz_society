@@ -11,6 +11,8 @@ local CurrentLocationIndex = nil
 ]]---------------------------------------------------
 
 local HasStoragePermission = function()
+    local PlayerData = GetPlayerData()
+
     local locationData = Config.Societies[PlayerData.Job].Locations[CurrentLocationIndex]
 
     for _, grade in pairs (locationData.InventoryContainer.grades) do
@@ -26,6 +28,8 @@ local HasStoragePermission = function()
 end
 
 local CloseMenuProperly = function ()
+    local PlayerData = GetPlayerData()
+
     MenuData.CloseAll()
 
     TaskStandStill(PlayerPedId(), 1)
@@ -42,6 +46,7 @@ end
 function OpenSocietyManagementMenu(index)
     MenuData.CloseAll()
 
+    local PlayerData = GetPlayerData()
     PlayerData.HasMenuOpen = true
 
     if CurrentLocationIndex == nil then
@@ -132,6 +137,7 @@ end
 function OpenSocietyEmployeesList()
     MenuData.CloseAll()
 
+    local PlayerData = GetPlayerData()
     local elements = {}
 
     TriggerEvent("tpz_core:ExecuteServerCallBack", "tpz_society:getEmployees", function(cb)
@@ -237,6 +243,8 @@ end
 function OpenEmployeeManagement(username, sourceId)
     MenuData.CloseAll()
 
+    local PlayerData = GetPlayerData()
+
     local options = {
         { label = Locales['MANAGEMENT_MENU_EMPLOYEE_GRADE'], value = 'grade',  desc = ""},
 
@@ -277,6 +285,8 @@ end
 
 function OpenEmployeeGradeManagement(username, sourceId)
     MenuData.CloseAll()
+
+    local PlayerData = GetPlayerData()
 
     local elements = {}
 
@@ -323,6 +333,8 @@ end
 
 function OpenSocietyLedgerMenu()
 
+    local PlayerData = GetPlayerData()
+    
     MenuData.CloseAll()
 
     local options = {
