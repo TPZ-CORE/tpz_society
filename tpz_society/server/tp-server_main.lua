@@ -2,8 +2,7 @@ local TPZ     = {}
 
 TriggerEvent("getTPZCore", function(cb) TPZ = cb end)
 
-Societies, Billing = {}, {}
-
+local Societies, Billing = {}, {}
 
 -----------------------------------------------------------
 --[[ Local Functions  ]]--
@@ -25,6 +24,18 @@ local function LoadBillProperlyByParameters(account, cost, date)
         end
     
     end)
+end
+
+-----------------------------------------------------------
+--[[ Local Functions  ]]--
+-----------------------------------------------------------
+
+function GetBilling()
+    return Billing
+end 
+
+function GetSocieties()
+    return Societies
 end
 
 -----------------------------------------------------------
