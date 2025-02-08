@@ -10,8 +10,8 @@ TriggerEvent("getTPZCore", function(cb) TPZ = cb end)
 
 -- The following event is triggered when player selects a character and Config.ToggleDutyOnPlayerJoin is true 
 -- and its society `ActiveDuty` is also true which toggles the player's job to off-duty automatically.
-RegisterServerEvent('tpz_society:togglePlayerDutyOnJoin')
-AddEventHandler('tpz_society:togglePlayerDutyOnJoin', function()
+RegisterServerEvent('tpz_society:server:togglePlayerDutyOnJoin')
+AddEventHandler('tpz_society:server:togglePlayerDutyOnJoin', function()
   local _source  = source
   local xPlayer  = TPZ.GetPlayer(_source)
 
@@ -21,13 +21,11 @@ AddEventHandler('tpz_society:togglePlayerDutyOnJoin', function()
   xPlayer.setJob('off' .. jobName)
   xPlayer.setJobGrade(jobGrade)
 
-  TriggerClientEvent("tpz_core:getPlayerJob", _source, { job = 'off' .. jobName, jobGrade = jobGrade })
-
 end)
 
 -- The following event is triggered when a player toggles the duty status to become off-duty or on-duty.
-RegisterServerEvent('tpz_society:toggleDutyStatus')
-AddEventHandler('tpz_society:toggleDutyStatus', function()
+RegisterServerEvent('tpz_society:server:toggleDutyStatus')
+AddEventHandler('tpz_society:server:toggleDutyStatus', function()
   local _source  = source
   local xPlayer  = TPZ.GetPlayer(_source)
 
@@ -44,21 +42,16 @@ AddEventHandler('tpz_society:toggleDutyStatus', function()
     xPlayer.setJob(jobName)
     xPlayer.setJobGrade(jobGrade)
 
-    TriggerClientEvent("tpz_core:getPlayerJob", _source, { job = jobName, jobGrade = jobGrade })
-
     NotifyData = Locales['DUTY_TOGGLE_ON']
-    NotifyType = "success"
+    NotifyType = "info"
   else
+
     xPlayer.setJob('off' .. jobName)
     xPlayer.setJobGrade(jobGrade)
-
-    TriggerClientEvent("tpz_core:getPlayerJob", _source, { job = 'off' .. jobName, jobGrade = jobGrade })
   
     NotifyData = Locales['DUTY_TOGGLE_OFF']
-    NotifyType = "error"
+    NotifyType = "info"
   end
 
   TriggerClientEvent("tpz_notify:sendNotification", _source, NotifyData.title, NotifyData.message, NotifyData.icon, NotifyType, NotifyData.duration)
-  
-  
 end)
