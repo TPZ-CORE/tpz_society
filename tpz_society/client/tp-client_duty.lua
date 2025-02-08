@@ -4,15 +4,17 @@
 -----------------------------------------------------------
 
 function TogglePlayerDutyOnJoin()
-    if not Config.ToggleDutyOnPlayerJoin or Config.Societies[ClientData.Job] == nil then
+    local PlayerData = GetPlayerData()
+
+    if not Config.ToggleDutyOnPlayerJoin or Config.Societies[PlayerData.Job] == nil then
         return
     end
 
-    if not Config.Societies[ClientData.Job].ActiveDuty then
+    if not Config.Societies[PlayerData.Job].ActiveDuty then
         return
     end
 
-    TriggerServerEvent('tpz_society:togglePlayerDutyOnJoin')
+    TriggerServerEvent('tpz_society:server:togglePlayerDutyOnJoin')
 
 end
 
@@ -31,10 +33,11 @@ Citizen.CreateThread(function()
         local coords  = GetEntityCoords(PlayerPedId())
 
         local isDead  = IsEntityDead(player)
+        local PlayerData = GetPlayerData()
 
-        if not isDead and not ClientData.HasMenuOpen and ClientData.Loaded then
+        if not isDead and not PlayerData.HasMenuOpen and PlayerData.Loaded then
 
-            local currentJobName = ClientData.Job
+            local currentJobName = PlayerData.Job
             if string.match(currentJobName, "off") then currentJobName = currentJobName:gsub("%off", "") end
 
             for index, locConfig in pairs(Config.Societies) do
@@ -67,7 +70,7 @@ Citizen.CreateThread(function()
             
                                 if PromptHasHoldModeCompleted(DutyPromptsList) then
             
-                                    TriggerServerEvent('tpz_society:toggleDutyStatus')
+                                    TriggerServerEvent('tpz_society:server:toggleDutyStatus')
             
                                     Wait(2000)
                                 end
