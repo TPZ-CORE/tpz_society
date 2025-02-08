@@ -1,4 +1,4 @@
-MenuData = {}
+local MenuData = {}
 
 TriggerEvent('tpz_menu_base:getData',function(call)
     MenuData = call
@@ -11,11 +11,11 @@ local CurrentLocationIndex = nil
 ]]---------------------------------------------------
 
 local HasStoragePermission = function()
-    local locationData = Config.Societies[ClientData.Job].Locations[CurrentLocationIndex]
+    local locationData = Config.Societies[PlayerData.Job].Locations[CurrentLocationIndex]
 
     for _, grade in pairs (locationData.InventoryContainer.grades) do
 
-        if tonumber(ClientData.JobGrade) == tonumber(grade) then
+        if tonumber(PlayerData.JobGrade) == tonumber(grade) then
             return true
         end
     end
@@ -29,7 +29,7 @@ local CloseMenuProperly = function ()
     MenuData.CloseAll()
 
     TaskStandStill(PlayerPedId(), 1)
-    ClientData.HasMenuOpen = false
+    PlayerData.HasMenuOpen = false
     TriggerEvent("tpz_hud:setHiddenStatus", false)
 
     CurrentLocationIndex = nil
@@ -42,7 +42,7 @@ end
 function OpenSocietyManagementMenu(index)
     MenuData.CloseAll()
 
-    ClientData.HasMenuOpen = true
+    PlayerData.HasMenuOpen = true
 
     if CurrentLocationIndex == nil then
         CurrentLocationIndex = index
@@ -80,7 +80,7 @@ function OpenSocietyManagementMenu(index)
 
             if hasPermission then
 
-                local containerId = Config.Societies[ClientData.Job].Locations[CurrentLocationIndex].InventoryContainer.containerId
+                local containerId = Config.Societies[PlayerData.Job].Locations[CurrentLocationIndex].InventoryContainer.containerId
 
                 if containerId == false then
                     SendNotification(nil, Locales['STORAGE_INVALID'], "error")
@@ -91,7 +91,7 @@ function OpenSocietyManagementMenu(index)
 
                 Wait(500)
 
-                TriggerEvent("tpz_inventory:openInventoryContainerById", containerId, Config.Societies[ClientData.Job].InventoryContainerTitle, false)
+                TriggerEvent("tpz_inventory:openInventoryContainerById", containerId, Config.Societies[PlayerData.Job].InventoryContainerTitle, false)
 
             else
                 SendNotification(nil, Locales['INSUFFICIENT_PERMISSIONS'], "error")
@@ -99,9 +99,9 @@ function OpenSocietyManagementMenu(index)
 
         elseif (data.current.value == 'employees') then
 
-            local bossGrade = Config.Societies[ClientData.Job].BossGrade
+            local bossGrade = Config.Societies[PlayerData.Job].BossGrade
 
-            if ClientData.JobGrade ~= bossGrade then
+            if PlayerData.JobGrade ~= bossGrade then
                 SendNotification(nil, Locales['INSUFFICIENT_PERMISSIONS'], "error")
                 return
             end
@@ -110,9 +110,9 @@ function OpenSocietyManagementMenu(index)
 
         elseif (data.current.value == 'ledger') then
             
-            local bossGrade = Config.Societies[ClientData.Job].BossGrade
+            local bossGrade = Config.Societies[PlayerData.Job].BossGrade
 
-            if ClientData.JobGrade ~= bossGrade then
+            if PlayerData.JobGrade ~= bossGrade then
                 SendNotification(nil, Locales['INSUFFICIENT_PERMISSIONS'], "error")
                 return
             end
@@ -198,7 +198,7 @@ function OpenSocietyEmployeesList()
                         end
 
                         if foundPlayer then
-                            TriggerServerEvent("tpz_society:hireSelectedSourceId", ClientData.Job, data.current.username, tonumber(data.current.source) )
+                            TriggerServerEvent("tpz_society:server:hireSelectedSourceId", PlayerData.Job, data.current.username, tonumber(data.current.source) )
                             Wait(2000)
                             OpenSocietyEmployeesList()
                         else
@@ -229,7 +229,7 @@ function OpenSocietyEmployeesList()
         end)
 
 
-    end, { job = ClientData.Job })
+    end, { job = PlayerData.Job })
 
 end
 
@@ -262,7 +262,7 @@ function OpenEmployeeManagement(username, sourceId)
             OpenEmployeeGradeManagement(username, tonumber(sourceId) )
 
         elseif (data.current.value == "fire") then
-            TriggerServerEvent("tpz_society:fireSelectedSourceId", ClientData.Job, username, tonumber(sourceId) )
+            TriggerServerEvent("tpz_society:server:fireSelectedSourceId", PlayerData.Job, username, tonumber(sourceId) )
             OpenSocietyEmployeesList()
         end
 
@@ -280,7 +280,7 @@ function OpenEmployeeGradeManagement(username, sourceId)
 
     local elements = {}
 
-    local society  = Config.Societies[ClientData.Job]
+    local society  = Config.Societies[PlayerData.Job]
     local length   = GetTableLength(society.GradesList)
 
     if length > 0 then
@@ -308,7 +308,7 @@ function OpenEmployeeGradeManagement(username, sourceId)
             OpenEmployeeManagement(username, sourceId)
 
         else
-            TriggerServerEvent("tpz_housing:setSelectedSourceIdGrade", ClientData.Job, username, tonumber(sourceId), tonumber(data.current.value), data.current.label)
+            TriggerServerEvent("tpz_housing:server:setSelectedSourceIdGrade", PlayerData.Job, username, tonumber(sourceId), tonumber(data.current.value), data.current.label)
             OpenSocietyEmployeesList()
         end
 
@@ -362,10 +362,10 @@ function OpenSocietyLedgerMenu()
                 if inputId ~= nil and inputId ~= 0 and inputId > 0 then
 
                     if data.current.value == 'deposit' then
-                        TriggerServerEvent("tpz_society:depositJobLedger", ClientData.Job, inputId )
+                        TriggerServerEvent("tpz_society:server:depositJobLedger", PlayerData.Job, inputId )
 
                     elseif data.current.value == 'withdraw' then
-                        TriggerServerEvent("tpz_society:withdrawJobLedger", ClientData.Job, inputId )
+                        TriggerServerEvent("tpz_society:server:withdrawJobLedger", PlayerData.Job, inputId )
                     end
 
                     Wait(500)

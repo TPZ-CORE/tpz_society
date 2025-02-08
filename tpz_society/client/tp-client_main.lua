@@ -1,5 +1,5 @@
 
-ClientData = { 
+local PlayerData = { 
     HasMenuOpen         = false,
     Username            = nil,
     CharIdentifier      = 0,
@@ -9,52 +9,66 @@ ClientData = {
 }
 
 -----------------------------------------------------------
+--[[ Functions ]]--
+-----------------------------------------------------------
+
+function GetPlayerData()
+    return PlayerData
+end
+
+-----------------------------------------------------------
 --[[ Base Events & Threads ]]--
 -----------------------------------------------------------
 
 -- Gets the player job when devmode set to false and character is selected.
 AddEventHandler("tpz_core:isPlayerReady", function()
 
-    TriggerEvent("tpz_core:ExecuteServerCallBack", "tpz_core:getPlayerData", function(data)
-        ClientData.CharIdentifier = data.charIdentifier
-        ClientData.Job            = data.job
-        ClientData.JobGrade       = data.jobGrade
-
-        ClientData.Username       = data.firstname .. ' ' .. data.lastname
-
-        ClientData.Loaded         = true
+    Wait(2000)
     
-        TriggerServerEvent('tpz_society:registerConnectedPlayer')
+    local data = exports.tpz_core:client().getPlayerClientData()
+
+    if data == nil then
+        return
+    end
+
+    PlayerData.CharIdentifier = data.charIdentifier
+    PlayerData.Job            = data.job
+    PlayerData.JobGrade       = data.jobGrade
+
+    PlayerData.Username       = data.firstname .. ' ' .. data.lastname
+
+    PlayerData.Loaded         = true
+    
+    TriggerServerEvent('tpz_society:server:registerConnectedPlayer')
         
-        TogglePlayerDutyOnJoin()
-    end)
-    
+    TogglePlayerDutyOnJoin()
+
 end)
 
 -- Gets the player job when devmode set to true.
 if Config.DevMode then
+
     Citizen.CreateThread(function ()
 
         Wait(2000)
 
-        TriggerEvent("tpz_core:ExecuteServerCallBack", "tpz_core:getPlayerData", function(data)
+        local data = exports.tpz_core:client().getPlayerClientData()
 
-            if data == nil then
-                return
-            end
+        if data == nil then
+            return
+        end
 
-            ClientData.CharIdentifier = data.charIdentifier
-            ClientData.Job            = data.job
-            ClientData.JobGrade       = data.jobGrade
+        PlayerData.CharIdentifier = data.charIdentifier
+        PlayerData.Job            = data.job
+        PlayerData.JobGrade       = data.jobGrade
 
-            ClientData.Username       = data.firstname .. ' ' .. data.lastname
+        PlayerData.Username       = data.firstname .. ' ' .. data.lastname
 
-            ClientData.Loaded         = true
-        
-            TriggerServerEvent('tpz_society:registerConnectedPlayer')
+        PlayerData.Loaded         = true
+    
+        TriggerServerEvent('tpz_society:server:registerConnectedPlayer')
 
-            TogglePlayerDutyOnJoin()
-        end)
+        TogglePlayerDutyOnJoin()
 
     end)
 end
@@ -62,8 +76,8 @@ end
 -- Updates the player job and job grade in case if changes.
 RegisterNetEvent("tpz_core:getPlayerJob")
 AddEventHandler("tpz_core:getPlayerJob", function(data)
-    ClientData.Job      = data.job
-    ClientData.JobGrade = data.jobGrade
+    PlayerData.Job      = data.job
+    PlayerData.JobGrade = data.jobGrade
 end)
 
 -----------------------------------------------------------
@@ -83,7 +97,7 @@ Citizen.CreateThread(function()
 
         local isDead = IsEntityDead(player)
 
-        if not isDead and not ClientData.HasMenuOpen and ClientData.Loaded then
+        if not isDead and not PlayerData.HasMenuOpen and PlayerData.Loaded then
 
             for index, locConfig in pairs(Config.Societies) do
 
@@ -93,7 +107,7 @@ Citizen.CreateThread(function()
                     local societyDist = vector3(location.Coords.x, location.Coords.y, location.Coords.z)
                     local distance    = #(playerDist - societyDist)
 
-                    if ClientData.Job == index then
+                    if PlayerData.Job == index then
                         
                         -- Creating marker on the location (If enabled).
                         if locConfig.Marker.Enabled and distance <= locConfig.Marker.DisplayDistance then
@@ -107,11 +121,12 @@ Citizen.CreateThread(function()
 
                             sleep = false
         
+                            local promptGroup, promptList = GetDutyPromptData()
+
                             local label = CreateVarString(10, 'LITERAL_STRING', Config.PromptKey.label)
+                            PromptSetActiveGroupThisFrame(promptGroup, label)
         
-                            PromptSetActiveGroupThisFrame(Prompts, label)
-        
-                            if PromptHasHoldModeCompleted(PromptsList) then
+                            if PromptHasHoldModeCompleted(promptList) then
         
                                 OpenSocietyManagementMenu(_index)
         

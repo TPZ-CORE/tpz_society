@@ -18,6 +18,7 @@ AddEventHandler('tpz_society:server:togglePlayerDutyOnJoin', function()
   local xPlayer  = TPZ.GetPlayer(_source)
 
   local jobName  = xPlayer.getJob()
+  
   local jobGrade = xPlayer.getJobGrade()
 
   xPlayer.setJob('off' .. jobName)
@@ -33,7 +34,7 @@ AddEventHandler('tpz_society:server:toggleDutyStatus', function()
   local _source  = source
   local xPlayer  = TPZ.GetPlayer(_source)
 
-  local jobName = xPlayer.getJob()
+  local jobName  = xPlayer.getJob()
   local jobGrade = xPlayer.getJobGrade()
 
   local NotifyData = nil

@@ -20,13 +20,15 @@ Config.SalaryTime = 30
 -- The following option is saving all data upon server restart hours (2-3 Minutes atleast before server restart is preferred).
 Config.RestartHours = { "7:57" , "13:57", "19:57", "1:57"}
 
+-- As default, we save all data every 15 minutes to avoid data loss in case for server crashes.
+-- @Duration = Time in minutes.
+Config.SaveDataRepeatingTimer = { Enabled = true, Duration = 15 }
+
 Config.Year = 1890
 
 -- If TPZ Banking exists, set it to true, the following script is creating History Records directly from society billing system.
--- Also, you will be receiving salaries directly to TPZ Banking (No item given), an item will be given
--- only if TPZBanking has been set to false.
--- This item is not supported by any of our scripts, it has to be manually supported by a developer of your server.
-Config.TPZBanking = true
+-- Also, you will be receiving salaries directly to TPZ Banking.
+Config.tpz_banking = true
 
 -- What is the job that should be set when an employee gets fired / kicked out of the current job?
 Config.UnemployedJob = "unemployed"
@@ -90,13 +92,10 @@ Config.Societies = {
     
         -- Set it to false if you don't want the players to receive any salary from the job (TPZ-Banking Support)
         -- The cost is the reward for the player after giving the document to the bank and also the amount which will take from ledger.
-        -- If ledger has not enough to pay for a salary, no item will be given.
+        -- If ledger has not enough to pay for a salary, no money will be given.
         -- (!) Time does not count for off-duty players.
         Salary = { 
             Enabled = true,
-
-            -- Set to false if you are using TPZ-Banking.
-            Item    = false, 
 
             -- Salary Cost based on the player's grade.
             -- If a player has a grade which is missing from below, the player will receive the same
@@ -177,13 +176,10 @@ Config.Societies = {
     
         -- Set it to false if you don't want the players to receive any salary from the job (TPZ-Banking Support)
         -- The cost is the reward for the player after giving the document to the bank and also the amount which will take from ledger.
-        -- If ledger has not enough to pay for a salary, no item will be given.
+        -- If ledger has not enough to pay for a salary, no money will be given.
         -- (!) Time does not count for off-duty players.
         Salary = { 
             Enabled = true,
-
-            -- Set to false if you are using TPZ-Banking.
-            Item    = false, 
 
             -- Salary Cost based on the player's grade.
             -- If a player has a grade which is missing from below, the player will receive the same
@@ -213,6 +209,20 @@ Config.Societies = {
 }
 
 -----------------------------------------------------------
+--[[ Webhooking (Only DevTools - Injection Cheat Logs) ]]--
+-----------------------------------------------------------
+
+Config.Webhooks = {
+    
+    ['DEVTOOLS_INJECTION_CHEAT'] = { -- Warnings and Logs about players who used or atleast tried to use devtools injection.
+        Enabled = false, 
+        Url = "", 
+        Color = 10038562,
+    },
+
+}
+
+-----------------------------------------------------------
 --[[ Notification Functions  ]]--
 -----------------------------------------------------------
 
@@ -221,9 +231,9 @@ Config.Societies = {
 function SendNotification(source, message, messageType)
 
     if not source then
-        TriggerEvent('tpz_core:sendRightTipNotification', message, 3000)
+        TriggerEvent('tpz_core:sendBottomTipNotification', message, 3000)
     else
-        TriggerClientEvent('tpz_core:sendRightTipNotification', source, message, 3000)
+        TriggerClientEvent('tpz_core:sendBottomTipNotification', source, message, 3000)
     end
   
 end

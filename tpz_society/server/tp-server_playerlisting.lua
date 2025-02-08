@@ -15,20 +15,19 @@ AddEventHandler('onResourceStop', function(resourceName)
       return
     end
 
-    ConnectedPlayers = {}
+    ConnectedPlayers = nil
 
 end)
 
 -- When player quits the game, we remove him from ConnectedPlayers list.
 AddEventHandler('playerDropped', function (reason)
-    local _source = source
-    ConnectedPlayers[_source] = nil
+    ConnectedPlayers[source] = nil
 end)
 
 -- The following event is triggered after selecting a character or using devmode,
 -- in order to load and register the player as connected.
-RegisterServerEvent('tpz_society:registerConnectedPlayer')
-AddEventHandler('tpz_society:registerConnectedPlayer', function()
+RegisterServerEvent('tpz_society:server:registerConnectedPlayer')
+AddEventHandler('tpz_society:server:registerConnectedPlayer', function()
     local _source         = source
     local xPlayer         = TPZ.GetPlayer(_source)
 
@@ -70,8 +69,6 @@ end
 GetConnectedPlayers = function()
     local data = { list = {}, players = 0 }
 
-    local finished = false
-
     local connectedPlayersLength = GetTableLength(ConnectedPlayers)
 
     if connectedPlayersLength > 0 then
@@ -81,19 +78,8 @@ GetConnectedPlayers = function()
             data.players = data.players + 1
     
             table.insert(data.list, player)
-    
-            if next(ConnectedPlayers, index) == nil then
-                finished = true
-            end
-    
         end
 
-    else
-        finished = true
-    end
-
-    while not finished do
-        Wait(50)
     end
 
     return data

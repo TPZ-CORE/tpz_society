@@ -64,11 +64,12 @@ Citizen.CreateThread(function()
     
                                 sleep = false
             
+                                local promptGroup, promptList = GetDutyPromptData()
+
                                 local label = CreateVarString(10, 'LITERAL_STRING', Config.DutyPromptKey.label)
+                                PromptSetActiveGroupThisFrame(promptGroup, label)
             
-                                PromptSetActiveGroupThisFrame(DutyPrompts, label)
-            
-                                if PromptHasHoldModeCompleted(DutyPromptsList) then
+                                if PromptHasHoldModeCompleted(promptList) then
             
                                     TriggerServerEvent('tpz_society:server:toggleDutyStatus')
             

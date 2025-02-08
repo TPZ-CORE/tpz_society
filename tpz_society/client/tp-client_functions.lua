@@ -1,10 +1,32 @@
+local Prompts, DutyPrompts         = GetRandomIntInRange(0, 0xffffff), GetRandomIntInRange(0, 0xffffff)
+local PromptsList, DutyPromptsList = {}, {}
+
+--[[-------------------------------------------------------
+ Base Events
+]]---------------------------------------------------------
+
+AddEventHandler("onResourceStop", function(resourceName)
+    if resourceName ~= GetCurrentResourceName() then
+        return
+    end
+
+    Citizen.InvokeNative(0x00EDE88D4D13CF59, Prompts) -- UiPromptDelete
+    Citizen.InvokeNative(0x00EDE88D4D13CF59, DutyPrompts) -- UiPromptDelete
+
+    for i, society in pairs (Config.Societies) do
+        for index, location in pairs (society.Locations) do
+
+            if location.BlipHandle then
+                RemoveBlip(location.BlipHandle)
+            end
+        end
+    end
+
+end)
 
 --[[-------------------------------------------------------
  Prompts
 ]]---------------------------------------------------------
-
-Prompts       = GetRandomIntInRange(0, 0xffffff)
-PromptsList   = {}
 
 RegisterActionPrompt = function()
 
@@ -26,9 +48,9 @@ RegisterActionPrompt = function()
     PromptsList = dPrompt
 end
 
-
-DutyPrompts       = GetRandomIntInRange(0, 0xffffff)
-DutyPromptsList   = {}
+function GetPromptData()
+    return Prompts, PromptList
+end
 
 RegisterDutyActionPrompt = function()
 
@@ -50,27 +72,16 @@ RegisterDutyActionPrompt = function()
     DutyPromptsList = dPrompt
 end
 
+function GetDutyPromptData()
+    return DutyPrompts, DutyPromptsList
+end
+
 --[[-------------------------------------------------------
  Blips Management
 ]]---------------------------------------------------------
 
-AddEventHandler("onResourceStop", function(resourceName)
-    if resourceName ~= GetCurrentResourceName() then
-        return
-    end
-
-    for i, society in pairs (Config.Societies) do
-        for index, location in pairs (society.Locations) do
-
-            if location.BlipHandle then
-                RemoveBlip(location.BlipHandle)
-            end
-        end
-    end
-
-end)
-
 Citizen.CreateThread(function ()
+
     for i, society in pairs (Config.Societies) do
 
         if society.BlipData and society.BlipData.Enabled then

@@ -1,7 +1,6 @@
 
 
-local TPZ    = {}
-local TPZInv = exports.tpz_inventory:getInventoryAPI()
+local TPZ = {}
 
 TriggerEvent("getTPZCore", function(cb) TPZ = cb end)
 
@@ -56,38 +55,20 @@ Citizen.CreateThread(function ()
 
             local salaryAmount = societyConfig.Salary.Grades[newPlayerGrade].Salary
 
-            if society.ledger >= salaryAmount and salaryAmount > 0 then
+            -- If the ledger does not have any money, we don't give anything.
+            if salaryAmount > 0 and salaryAmount <= society.ledger then
 
-                if Config.TPZBanking then
+              if Config.tpz_banking then
                   
-                  --TriggerEvent('tpz_banking:depositDefaultBankingAccount', tonumber(player.source), salaryAmount, Locales['BANKING_SALARY_REASON'], true)
+                --TriggerEvent('tpz_banking:depositDefaultBankingAccount', tonumber(player.source), salaryAmount, Locales['BANKING_SALARY_REASON'], true)
 
-                else
+              else
 
-                  if societyConfig.Salary.Item ~= nil then
-                    local canCarryItem = TPZInv.canCarryItem(player.source, societyConfig.Salary.Item, 1)
-
-                    if canCarryItem then
-                    
-                      local metadata = { salary = salaryAmount, description = player.username, durability = -1 }
-                      TPZInv.addItem(player.source, societyConfig.Salary.Item, 1, metadata)
-                    
-                      UpdateSocietyLedger(jobName, 'REMOVE', salaryAmount)
-  
-                    else
-  
-                    end
-
-                 else
-                     --money
-                  end
-
-              
+                xPlayer.addAccount(0, salaryAmount)
+                UpdateSocietyLedger(jobName, 'REMOVE', salaryAmount)
 
               end
 
-            else
--- warn about no money on ledger?
             end
 
           end
@@ -99,4 +80,5 @@ Citizen.CreateThread(function ()
     end
 
   end
+
 end)

@@ -2,40 +2,68 @@ local TPZ     = {}
 
 TriggerEvent("getTPZCore", function(cb) TPZ = cb end)
 
-local Societies, Billing = {}, {}
+local Societies = {}
 
 -----------------------------------------------------------
---[[ Local Functions  ]]--
+--[[ Functions  ]]--
 -----------------------------------------------------------
 
-local function LoadBillProperlyByParameters(account, cost, date)
+-- @GetTableLength returns the length of a table.
+function GetTableLength(T)
+    local count = 0
+    for _ in pairs(T) do count = count + 1 end
+    return count
+end
+
+function UpdateSocietyLedger(job, type, amount)
+    -- In case the society has not been registered in `society` database table.
+    -- We don't allow any society updates.
+    if Societies[job] then
+        
+        -- If type == `ADD`, we add the extra amount on the ledger.
+        if type == 'ADD' then
+            Societies[job].ledger = Societies[job].ledger + amount
     
-    exports["ghmattimysql"]:execute("SELECT * FROM billing", {}, function(result)
+        -- If type == `REMOVE`, we remove the amount from the ledger and if it
+        -- equals to or below 0, we set it to 0 (Not allowing negative values for preventing bugs).
+        -- Removing is used for the salaries.
+        elseif type == 'REMOVE' then
 
-        for _, res in pairs (result) do 
+            Societies[job].ledger = Societies[job].ledger - amount
     
-            if res.account == account and res.cost == cost and res.date == date then
-
-                Billing[res.id] = {} 
-                Billing[res.id] = res 
-
+            if Societies[job].ledger <= 0 then 
+                Societies[job].ledger = 0 
             end
-
-        end
     
-    end)
+        end
+        
+    else
+        print('(!) There was an attempt updating the following society ( ' .. job .. ' ) ledger while does not exist in the `society` database table.')
+    end
+
+end
+
+function GetSocieties()
+    return Societies
 end
 
 -----------------------------------------------------------
 --[[ Local Functions  ]]--
 -----------------------------------------------------------
 
-function GetBilling()
-    return Billing
-end 
+local function GetPlayerData(source)
+	local _source = source
+    local xPlayer = TPZ.GetPlayer(_source)
 
-function GetSocieties()
-    return Societies
+	return {
+        steamName      = GetPlayerName(_source),
+        username       = xPlayer.getFirstName() .. ' ' .. xPlayer.getLastName(),
+        identifier     = xPlayer.getIdentifier(),
+        charIdentifier = xPlayer.getCharacterIdentifier(),
+        job            = xPlayer.getJob(),
+        jobGrade       = xPlayer.getJobGrade(),
+	}
+
 end
 
 -----------------------------------------------------------
@@ -65,405 +93,236 @@ AddEventHandler('onResourceStart', function(resourceName)
         end
     end)
 
-    exports["ghmattimysql"]:execute("SELECT * FROM billing ORDER BY id", {}, function(result)
-        local tableLength = GetTableLength(result)
-        
-        if tableLength > 0 then
-            for _, res in pairs (result) do Billing[res.id] = {} Billing[res.id] = res end
-
-            print("Successfully loaded (" .. tableLength .. ') bills.')
-        end
-    end)
-
-
 end)
 
 -----------------------------------------------------------
 --[[ General Events  ]]--
 -----------------------------------------------------------
 
-RegisterServerEvent('tpz_society:createNewBill')
-AddEventHandler('tpz_society:createNewBill', function(targetId, isJob, account, cost, reason, issuer)
-    local _source         = source
-    local _tsource        = targetId
+RegisterServerEvent("tpz_society:server:setSelectedSourceIdGrade")
+AddEventHandler("tpz_society:server:setSelectedSourceIdGrade", function(job, username, targetSourceId, gradeIndex, gradeLabel)
+    local _source    = source
+    local _tsource   = tonumber(targetSourceId)
 
-    local xPlayer         = TPZ.GetPlayer(_source)
-    local xJob            = xPlayer.getJob()
-    local xUsername       = xPlayer.getFirstName() .. ' ' .. xPlayer.getLastName()
+    local xPlayer    = TPZ.GetPlayer(_source)
+    local PlayerData = GetPlayerData(_source)
 
-    local tPlayer         = TPZ.GetPlayer(_tsource)
-    local tIdentifier     = tPlayer.getIdentifier()
-    local tCharidentifier = tPlayer.getCharacterIdentifier()
-    local tUsername       = tPlayer.getFirstName() .. ' ' .. tPlayer.getLastName()
+    if ( job == nil ) or ( Societies[job] == nil ) or ( Config.Societies[job] == nil ) or ( job ~= PlayerData.job ) or ( Config.Societies[job] and Config.Societies[job].BossGrade ~= PlayerData.jobGrade ) then
 
-    local currentDate     = os.date('%d').. '/' ..os.date('%m').. '/' .. Config.Year .. " " .. os.date('%H') .. ":" .. os.date('%M') .. ":" .. os.date('%S')
-
-    local Parameters = {
-        ['identifier']      = tIdentifier,
-        ['charidentifier']  = tCharidentifier,
-        ['username']        = tUsername,
-        ['account']         = account,
-        ['cost']            = cost,
-        ['date']            = currentDate,
-    }
-
-    if isJob or isJob == 1 then
-        Parameters['job']    = 1
-        Parameters['reason'] = xJob
-        Parameters['issuer'] = xUsername
-
-    elseif not isJob or isJob == 0 then
-        Parameters['job']    = 0
-        Parameters['reason'] = reason
-        Parameters['issuer'] = issuer
-    end
-
-    SendNotification(_source, Locales['CREATED_BILL'], "success")
-    SendNotification(_tsource, Locales['RECEIVED_BILL'], "info")
-
-    exports.ghmattimysql:execute("INSERT INTO `billing` ( `job`, `reason`, `identifier`, `charidentifier`, `username`, `issuer`, `account`, `cost`, `date`) VALUES ( @job, @reason, @identifier, @charidentifier, @username, @issuer, @account, @cost, @date)", Parameters)
-
-    Wait(2000)
-    LoadBillProperlyByParameters(account, cost, currentDate)
-    
-
-end)
-
-RegisterServerEvent('tpz_society:createNewBillTo')
-AddEventHandler('tpz_society:createNewBillTo', function(identifier, charidentifier, account, cost, reason, issuer)
-
-    local currentDate     = os.date('%d').. '/' ..os.date('%m').. '/' .. Config.Year .. " " .. os.date('%H') .. ":" .. os.date('%M') .. ":" .. os.date('%S')
-
-    local Parameters = {
-        ['job']             = 0,
-        ['reason']          = reason,
-        ['identifier']      = identifier,
-        ['charidentifier']  = charidentifier,
-        ['username']        = issuer,
-        ['issuer']          = issuer,
-        ['account']         = account,
-        ['cost']            = cost,
-        ['date']            = currentDate,
-    }
-
-    exports.ghmattimysql:execute("INSERT INTO `billing` ( `job`, `reason`, `identifier`, `charidentifier`, `username`, `issuer`, `account`, `cost`, `date`) VALUES ( @job, @reason, @identifier, @charidentifier, @username, @issuer, @account, @cost, @date)", Parameters)
-
-    Wait(2000)
-    LoadBillProperlyByParameters(account, cost, currentDate)
-end)
-
-RegisterServerEvent('tpz_society:payBill')
-AddEventHandler('tpz_society:payBill', function(billingId, bankName)
-    local _source     = source
-    local xPlayer     = TPZ.GetPlayer(_source)
-
-    -- If billing id is null for some reason, we don't run the rest of the code.
-    if Billing[billingId] == nil then
-        return
-    end
-
-    local billingData = Billing[billingId]
-
-    local money = xPlayer.getAccount(billingData.account)
-
-    if money < billingData.cost then
-
-        if Config.TPZBanking then
-            TriggerClientEvent("tpz_banking:sendNotification", _source, Locales['NOT_ENOUGH_TO_PAY_BILL'], 'error')
-        
-        else
-            -- other notification
+        if Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Enabled then
+            local _w, _c      = Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Url, Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Color
+            local description = 'The specified user attempted to use devtools / injection or netbug cheat on society withdraw job ledger.'
+            TPZ.SendToDiscordWithPlayerParameters(_w, Locales['DEVTOOLS_INJECTION_DETECTED_TITLE_LOG'], _source, PlayerData.steamName, PlayerData.username, PlayerData.identifier, PlayerData.charIdentifier, description, _c)
         end
 
+        xPlayer.disconnect(Locales['DEVTOOLS_INJECTION_DETECTED'])
+
         return
     end
 
-    xPlayer.removeAccount(billingData.account, billingData.cost)
-
-    if billingData.job == 1 and Societies[billingData.job] then
-        UpdateSocietyLedger(billingData.job, 'ADD', billingData.cost)
-    end
-
-    TriggerEvent("tpz_society:onPaidBill", billingData)
-
-    Billing[billingId] = nil
-
-    exports.ghmattimysql:execute( "DELETE FROM billing WHERE id = @id", {["@id"] = billingData.id})
-
-    -- TPZ Banking Support (Creating history records) & notification system.
-    if Config.TPZBanking then
-        TriggerClientEvent("tpz_banking:sendNotification", _source, Locales['PAID_BILL'], 'success')
-
-        TriggerEvent('tpz_banking:registerHistoryRecord', _source, bankName, billingData.identifier, billingData.charidentifier, billingData.reason, billingData.account, billingData.cost)
-    else
-        -- other notification
-    end
-
-    TriggerClientEvent("tpz_banking:refreshPlayerBills", _source)
-
-end)
-
--- @parameter id
--- @parameter job
--- @parameter reason
--- @parameter identifier
--- @parameter charidentifier
--- @parameter username
--- @parameter issuer
--- @parameter account
--- @parameter cost
--- @parameter date
-RegisterServerEvent('tpz_society:onPaidBill')
-AddEventHandler('tpz_society:onPaidBill', function(data)
-    -- todo nothing
-end)
-
-
-RegisterServerEvent("tpz_society:setSelectedSourceIdGrade")
-AddEventHandler("tpz_society:setSelectedSourceIdGrade", function(job, username, sourceId, gradeIndex, gradeLabel)
-    local _source = source
-    local tsource = sourceId
-
-    if job == nil or Societies[job] == nil then
-        print('(!) There was an injection attempt "tpz_society:setSelectedSourceIdGrade" which was triggered by the following source and steam name: ' .. _source .. " " .. GetPlayerName(_source))
-        return
-    end
-
-    if GetPlayerName(tsource) == nil then
+    if GetPlayerName(_tsource) == nil or GetPlayerName(_tsource) and not TPZ.GetPlayer(_tsource).loaded() then
         SendNotification(_source, Locales['PLAYER_NO_LONGER_AVAILABLE'], "error")
         return
     end
 
-    local tPlayer = TPZ.GetPlayer(tsource)
+    local tPlayer = TPZ.GetPlayer(_tsource)
 
     tPlayer.setJobGrade(tonumber(gradeIndex))
-
-    TriggerClientEvent("tpz_core:getPlayerJob", tonumber(tsource), { job = job, jobGrade = tonumber(gradeIndex) })
 
     SendNotification(_source, string.format(Locales['GRADE_SET_TO_EMPLOYEE'], username, gradeLabel), "success")
     SendNotification(tsource, string.format(Locales['GRADE_SET_TO_EMPLOYEE_TARGET'], gradeLabel), "info")
 end)
 
--- @fireSelectedSourceId is used in society menu and is triggered only to set an employee as unemployed (fired) from
--- the current job society.
-RegisterServerEvent("tpz_society:fireSelectedSourceId")
-AddEventHandler("tpz_society:fireSelectedSourceId", function(job, username, sourceId)
-    local _source = source
-    local tsource = sourceId
+-- @hireSelectedSourceId is used in society menu and is triggered only to hire a player as a new employee to the current job society.
+RegisterServerEvent("tpz_society:server:server:hireSelectedSourceId")
+AddEventHandler("tpz_society:server:server:hireSelectedSourceId", function(job, username, targetSourceId)
+    local _source    = source
+    local _tsource   = tonumber(targetSourceId)
 
-    if job == nil or Societies[job] == nil then
-        print('(!) There was an injection attempt "tpz_society:fireSelectedSourceId" which was triggered by the following source and steam name: ' .. _source .. " " .. GetPlayerName(_source))
+    local xPlayer    = TPZ.GetPlayer(_source)
+    local PlayerData = GetPlayerData(_source)
+
+    if ( job == nil ) or ( Societies[job] == nil ) or ( Config.Societies[job] == nil ) or ( job ~= PlayerData.job ) or ( Config.Societies[job] and Config.Societies[job].BossGrade ~= PlayerData.jobGrade ) then
+
+        if Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Enabled then
+            local _w, _c      = Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Url, Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Color
+            local description = 'The specified user attempted to use devtools / injection or netbug cheat on society withdraw job ledger.'
+            TPZ.SendToDiscordWithPlayerParameters(_w, Locales['DEVTOOLS_INJECTION_DETECTED_TITLE_LOG'], _source, PlayerData.steamName, PlayerData.username, PlayerData.identifier, PlayerData.charIdentifier, description, _c)
+        end
+
+        xPlayer.disconnect(Locales['DEVTOOLS_INJECTION_DETECTED'])
+
         return
     end
 
-    if GetPlayerName(tsource) == nil then
+    if GetPlayerName(_tsource) == nil or GetPlayerName(_tsource) and not TPZ.GetPlayer(_tsource).loaded() then
         SendNotification(_source, Locales['PLAYER_NO_LONGER_AVAILABLE'], "error")
         return
     end
 
-    local tPlayer        = TPZ.GetPlayer(tsource)
-    local charidentifier = tPlayer.getCharacterIdentifier()
+    local tPlayer          = TPZ.GetPlayer(_tsource)
+    local PlayerTargetData = GetPlayerData(_tsource)
 
-    tPlayer.setJob(Config.UnemployedJob)
-    tPlayer.setJobGrade(0)
-
-    TriggerClientEvent("tpz_core:getPlayerJob", tonumber(tsource), { job = Config.UnemployedJob, jobGrade = 0 })
-
-    SendNotification(_source, string.format(Locales['FIRED_EMPLOYEE'], username), "success")
-    SendNotification(tsource, Locales['FIRED_EMPLOYEE_TARGET'], "info")
-
-    local webhookData  = Config.Societies[job].Webhooking
-
-    if webhookData.Enabled then
-        local title   = "💼` " .. job .. " (Fired) `"
-        local message = "The player with the following character id: **`( " .. charidentifier .. ")`** has been fired.`"
-        TriggerEvent("tpz_core:sendToDiscord", webhookData.Url, title, message, webhookData.Color)
-    end
-
-end)
-
--- @hireSelectedSourceId is used in society menu and is triggered only to hire a player as a new employee to
--- the current job society.
-RegisterServerEvent("tpz_society:hireSelectedSourceId")
-AddEventHandler("tpz_society:hireSelectedSourceId", function(job, username, sourceId)
-    local _source = source
-    local tsource = sourceId
-
-    if job == nil or Societies[job] == nil then
-        print('(!) There was an injection attempt "tpz_society:hireSelectedSourceId" which was triggered by the following source and steam name: ' .. _source .. " " .. GetPlayerName(_source))
-        return
-    end
-
-    if GetPlayerName(tsource) == nil then
-        SendNotification(_source, Locales['PLAYER_NO_LONGER_AVAILABLE'], "error")
-        return
-    end
-
-    local tPlayer        = TPZ.GetPlayer(tsource)
-    local charidentifier = tPlayer.getCharacterIdentifier()
-
-    tPlayer.setJob(job)
-    tPlayer.setJobGrade(Config.Societies[job].RecruitGrade)
-
-    TriggerClientEvent("tpz_core:getPlayerJob", tonumber(tsource), { job = job, jobGrade = Config.Societies[job].RecruitGrade })
+    tPlayer.setJob(job) -- sets the job.
+    tPlayer.setJobGrade(Config.Societies[job].RecruitGrade) -- always hiring as recruit grade at first.
 
     SendNotification(_source, string.format(Locales['HIRED_EMPLOYEE'], username), "success")
-    SendNotification(tsource, Locales['HIRED_EMPLOYEE_TARGET'], "info")
+    SendNotification(_tsource, Locales['HIRED_EMPLOYEE_TARGET'], "info")
 
     local webhookData  = Config.Societies[job].Webhooking
 
     if webhookData.Enabled then
-        local title   = "💼` " .. job .. " (Hired) `"
-        local message = "The player with the following character id: **`( " .. charidentifier .. ")`** has been hired to the mentioned job as an employee.`"
-        TriggerEvent("tpz_core:sendToDiscord", webhookData.Url, title, message, webhookData.Color)
+        local title       = "💼` " .. Config.Societies[job].JobLabel .. " - Hired New Employee `"
+        local description = string.format('The specified user hired a new employee: `(Username: %s, Identifier: %s, Char Identifier: %s)` to the mentioned department.', PlayerTargetData.username, PlayerTargetData.identifier, PlayerTargetData.charIdentifier)
+
+        TPZ.SendToDiscordWithPlayerParameters( webhookData.Url, title, _source, PlayerData.steamName, PlayerData.username, PlayerData.identifier, PlayerData.charIdentifier, description, webhookData.Color)
+
     end
 
 end)
 
-RegisterServerEvent("tpz_society:addJobLedgerMoney")
-AddEventHandler("tpz_society:addJobLedgerMoney", function(targetSource, job, amount)
-    local _source = targetSource
-    local xPlayer = TPZ.GetPlayer(_source)
-    local charidentifier = xPlayer.getCharacterIdentifier()
+-- @fireSelectedSourceId is used in society menu and is triggered only to set an employee as unemployed (fired) from
+-- the current job society.
+RegisterServerEvent("tpz_society:server:fireSelectedSourceId")
+AddEventHandler("tpz_society:server:fireSelectedSourceId", function(job, username, targetSourceId)
+    local _source    = source
+    local _tsource   = tonumber(targetSourceId)
 
-    if job == nil or Societies[job] == nil then
-        print('(!) There was an injection attempt "tpz_society:addJobLedgerMoney" which was triggered by the following source and steam name: ' .. _source .. " " .. GetPlayerName(_source))
+    local xPlayer    = TPZ.GetPlayer(_source)
+    local PlayerData = GetPlayerData(_source)
+
+    if ( job == nil ) or ( Societies[job] == nil ) or ( Config.Societies[job] == nil ) or ( job ~= PlayerData.job ) or ( Config.Societies[job] and Config.Societies[job].BossGrade ~= PlayerData.jobGrade ) then
+
+        if Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Enabled then
+            local _w, _c      = Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Url, Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Color
+            local description = 'The specified user attempted to use devtools / injection or netbug cheat on society withdraw job ledger.'
+            TPZ.SendToDiscordWithPlayerParameters(_w, Locales['DEVTOOLS_INJECTION_DETECTED_TITLE_LOG'], _source, PlayerData.steamName, PlayerData.username, PlayerData.identifier, PlayerData.charIdentifier, description, _c)
+        end
+
+        xPlayer.disconnect(Locales['DEVTOOLS_INJECTION_DETECTED'])
+
+        return
+    end
+
+    if GetPlayerName(_tsource) == nil or GetPlayerName(_tsource) and not TPZ.GetPlayer(_tsource).loaded() then
+        SendNotification(_source, Locales['PLAYER_NO_LONGER_AVAILABLE'], "error")
+        return
+    end
+
+    local tPlayer          = TPZ.GetPlayer(_tsource)
+    local PlayerTargetData = GetPlayerData(_tsource)
+
+    tPlayer.setJob(Config.UnemployedJob) -- reset
+    tPlayer.setJobGrade(0) -- reset
+
+    SendNotification(_source, string.format(Locales['FIRED_EMPLOYEE'], username), "success")
+    SendNotification(_tsource, Locales['FIRED_EMPLOYEE_TARGET'], "info")
+
+    local webhookData  = Config.Societies[job].Webhooking
+
+    if webhookData.Enabled then
+        local title       = "💼` " .. Config.Societies[job].JobLabel .. " - Fired Employee `"
+        local description = string.format('The specified user fired an employee: `(Username: %s, Identifier: %s, Char Identifier: %s)` from the mentioned department.', PlayerTargetData.username, PlayerTargetData.identifier, PlayerTargetData.charIdentifier)
+
+        TPZ.SendToDiscordWithPlayerParameters( webhookData.Url, title, _source, PlayerData.steamName, PlayerData.username, PlayerData.identifier, PlayerData.charIdentifier, description, webhookData.Color)
+    end
+
+end)
+
+-- The specified event is triggered when being in the society menu to add money on the ledger account.
+RegisterServerEvent("tpz_society:server:depositJobLedger")
+AddEventHandler("tpz_society:server:depositJobLedger", function(job, quantity)
+    local _source    = source
+    local xPlayer    = TPZ.GetPlayer(_source)
+    local PlayerData = GetPlayerData(_source)
+
+    if ( job == nil ) or ( Societies[job] == nil ) or ( Config.Societies[job] == nil ) or ( job ~= PlayerData.job ) or ( Config.Societies[job] and Config.Societies[job].BossGrade ~= PlayerData.jobGrade ) then
+
+        if Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Enabled then
+            local _w, _c      = Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Url, Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Color
+            local description = 'The specified user attempted to use devtools / injection or netbug cheat on society withdraw job ledger.'
+            TPZ.SendToDiscordWithPlayerParameters(_w, Locales['DEVTOOLS_INJECTION_DETECTED_TITLE_LOG'], _source, PlayerData.steamName, PlayerData.username, PlayerData.identifier, PlayerData.charIdentifier, description, _c)
+        end
+
+        xPlayer.disconnect(Locales['DEVTOOLS_INJECTION_DETECTED'])
+
         return
     end
 
     local money = xPlayer.getAccount(0)
 
-    if money < amount then
-        return
-    end
-
-    UpdateSocietyLedger(job, 'ADD', amount)
-    xPlayer.removeAccount(0, amount)
-end)
-
-RegisterServerEvent("tpz_society:depositJobLedger")
-AddEventHandler("tpz_society:depositJobLedger", function(job, amount)
-    local _source = source
-    local xPlayer = TPZ.GetPlayer(_source)
-    local charidentifier = xPlayer.getCharacterIdentifier()
-
-    if job == nil or Societies[job] == nil then
-        print('(!) There was an injection attempt "tpz_society:depositJobLedger" which was triggered by the following source and steam name: ' .. _source .. " " .. GetPlayerName(_source))
-        return
-    end
-
-    local money = xPlayer.getAccount(0)
-
-    if money < amount then
+    if money < quantity then
         SendNotification(_source, Locales['NOT_ENOUGH_MONEY_TO_DEPOSIT'], "error")
         return
     end
-
-    UpdateSocietyLedger(job, 'ADD', amount)
-
-    xPlayer.removeAccount(0, amount)
     
-    SendNotification(_source, string.format(Locales['LEDGER_DEPOSIT'], amount), "success")
+    xPlayer.removeAccount(0, quantity)
+    UpdateSocietyLedger(job, 'ADD', quantity)
+    
+    SendNotification(_source, string.format(Locales['LEDGER_DEPOSIT'], quantity), "success")
 
     local webhookData  = Config.Societies[job].Webhooking
 
     if webhookData.Enabled then
-        local title   = "💼` " .. job .. " (Deposit) `"
-        local message = "The player with the following character id: **`( " .. charidentifier .. ")`** deposited $" .. amount .. " dollars in the society ledger.`"
-        TriggerEvent("tpz_core:sendToDiscord", webhookData.Url, title, message, webhookData.Color)
+        local title       = "💼` " .. Config.Societies[job].JobLabel .. " - Ledger Deposit `"
+        local description = string.format('The specified user deposited to the mentioned department %s dollars.', quantity)
+
+        TPZ.SendToDiscordWithPlayerParameters( webhookData.Url, title, _source, PlayerData.steamName, PlayerData.username, PlayerData.identifier, PlayerData.charIdentifier, description, webhookData.Color)
+
     end
 
 end)
 
+-- The specified event is triggered when being in the society menu to withdraw money from the ledger account.
+RegisterServerEvent("tpz_society:server:withdrawJobLedger")
+AddEventHandler("tpz_society:server:withdrawJobLedger", function(job, quantity)
+    local _source    = source
 
-RegisterServerEvent("tpz_society:withdrawJobLedger")
-AddEventHandler("tpz_society:withdrawJobLedger", function(job, amount)
-    local _source = source
-    local xPlayer = TPZ.GetPlayer(_source)
-    local charidentifier = xPlayer.getCharacterIdentifier()
+    local xPlayer    = TPZ.GetPlayer(_source)
+    local PlayerData = GetPlayerData(_source)
 
-    if job == nil or Societies[job] == nil then
-        print('(!) There was an injection attempt "tpz_society:withdrawJobLedger" which was triggered by the following source and steam name: ' .. _source .. " " .. GetPlayerName(_source))
+    if ( job == nil ) or ( Societies[job] == nil ) or ( Config.Societies[job] == nil ) or ( job ~= PlayerData.job ) or ( Config.Societies[job] and Config.Societies[job].BossGrade ~= PlayerData.jobGrade ) then
+
+        if Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Enabled then
+            local _w, _c      = Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Url, Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Color
+            local description = 'The specified user attempted to use devtools / injection or netbug cheat on society withdraw job ledger.'
+            TPZ.SendToDiscordWithPlayerParameters(_w, Locales['DEVTOOLS_INJECTION_DETECTED_TITLE_LOG'], _source, PlayerData.steamName, PlayerData.username, PlayerData.identifier, PlayerData.charIdentifier, description, _c)
+        end
+
+        xPlayer.disconnect(Locales['DEVTOOLS_INJECTION_DETECTED'])
+
         return
     end
 
-    if not DoesSocietyLedgerHasEnough(job, amount) then
+    if Societies[job].ledger < quantity then
         SendNotification(_source, Locales['NOT_ENOUGH_MONEY_TO_WITHDRAW'], "error")
         return
     end
 
-    UpdateSocietyLedger(job, 'REMOVE', amount)
-    xPlayer.addAccount(0, amount)
+    xPlayer.addAccount(0, quantity)
+    UpdateSocietyLedger(job, 'REMOVE', quantity)
 
-    SendNotification(_source, string.format(Locales['LEDGER_WITHDREW'], amount), "success")
+    SendNotification(_source, string.format(Locales['LEDGER_WITHDREW'], quantity), "success")
 
     local webhookData  = Config.Societies[job].Webhooking
 
     if webhookData.Enabled then
-        local title   = "💼` " .. job .. " (Withdraw) `"
-        local message = "The player with the following character id: **`( " .. charidentifier .. ")`** withdrew $" .. amount .. " dollars from the society ledger.`"
-        TriggerEvent("tpz_core:sendToDiscord", webhookData.Url, title, message, webhookData.Color)
+
+        local title       = "💼` " .. Config.Societies[job].JobLabel .. " - Ledger Withdraw `"
+        local description = string.format('The specified user withdrew from the mentioned department %s dollars.', quantity)
+
+        TPZ.SendToDiscordWithPlayerParameters( webhookData.Url, title, _source, PlayerData.steamName, PlayerData.username, PlayerData.identifier, PlayerData.charIdentifier, description, webhookData.Color)
     end
 
 end)
-
---------------------------------------------------------- --
---[[ Functions  ]]--
------------------------------------------------------------
-
-function UpdateSocietyLedger(job, type, amount)
-    -- In case the society has not been registered in `society` database table.
-    -- We don't allow any society updates.
-    if Societies[job] then
-        
-        -- If type == `ADD`, we add the extra amount on the ledger.
-        if type == 'ADD' then
-            Societies[job].ledger = Societies[job].ledger + amount
-    
-        -- If type == `REMOVE`, we remove the amount from the ledger and if it
-        -- equals to or below 0, we set it to 0 (Not allowing negative values for preventing bugs).
-        -- Removing is used for the salaries.
-        elseif type == 'REMOVE' then
-            Societies[job].ledger = Societies[job].ledger - amount
-    
-            if Societies[job].ledger <= 0 then 
-                Societies[job].ledger = 0 
-            end
-    
-        end
-        
-    else
-        print('(!) There was an attempt updating the following society ( ' .. job .. ' ) ledger while does not exist in the `society` database table.')
-    end
-
-end
-
-function DoesSocietyLedgerHasEnough(job, amount)
-
-    -- In case the society has not been registered in `society` database table.
-    -- We don't allow any society updates.
-    if Societies[job] then
-        return amount <= Societies[job].ledger
-    end
-
-    -- If society does not exist, it will always return as false so it won't 
-    -- give any salary mistaken.
-    return false
-end
-
--- @GetTableLength returns the length of a table.
-function GetTableLength(T)
-    local count = 0
-    for _ in pairs(T) do count = count + 1 end
-    return count
-end
-
 
 -----------------------------------------------------------
 --[[ Threads  ]]--
 -----------------------------------------------------------
 
--- Saving (Updating) Societies before server restart.
+local CurrentTime  = 0
+
+-- Saving (Updating) Societies before server restart or every x minutes.
 Citizen.CreateThread(function()
 	while true do
 		Wait(60000)
@@ -488,10 +347,17 @@ Citizen.CreateThread(function()
         while not finished do
             Wait(1000)
         end
+
+        CurrentTime = CurrentTime + 1
+
+        if Config.SaveDataRepeatingTimer.Enabled and CurrentTime == Config.SaveDataRepeatingTimer.Duration then
+          CurrentTime = 0
+          shouldSave  = true
+        end
     
         if shouldSave then
 
-            if GetTableLength(Societies) > 0 then
+            if Societies and GetTableLength(Societies) > 0 then
                 
                 for _, society in pairs (Societies) do
 
@@ -502,10 +368,10 @@ Citizen.CreateThread(function()
 
                     exports.ghmattimysql:execute("UPDATE `society` SET `ledger` = @ledger WHERE job = @job", Parameters)
 
-                    if Config.Debug then
-                        print("The following Society: " .. society.job .. " has been saved.")
-                    end
+                end
 
+                if Config.Debug then
+                    print( " (" .. GetTableLength(Societies) .. ") societies have been saved.")
                 end
 
             end

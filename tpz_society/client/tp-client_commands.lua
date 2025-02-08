@@ -7,7 +7,8 @@
 RegisterCommand(Config.CreateBillCommand, function(source, args, rawCommand)
     local target, inputAccount, inputAmount = tonumber(args[1]), tonumber(args[2]),  tonumber(args[3])
 
-    local society  = Config.Societies[ClientData.Job]
+    local PlayerData = GetPlayerData()
+    local society    = Config.Societies[PlayerData.Job]
 
     if (society == nil) or (society and not society.Billing) then
         SendNotification(nil, Locales['SOCIETY_CANNOT_CREATE_BILLS'], "error")
@@ -41,7 +42,7 @@ RegisterCommand(Config.CreateBillCommand, function(source, args, rawCommand)
     end
 
     if foundPlayer then
-        TriggerServerEvent('tpz_society:createNewBill', target, 1, inputAccount, inputAmount, ClientData.Job, ClientData.Job)
+        TriggerServerEvent('tpz_society:server:createNewBill', target, 1, inputAccount, inputAmount, PlayerData.Job, PlayerData.Job)
     else
         SendNotification(nil, Locales['PLAYER_NOT_FOUND'], "error")
     end
