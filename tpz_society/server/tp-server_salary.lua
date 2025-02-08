@@ -14,11 +14,10 @@ Citizen.CreateThread(function ()
     Citizen.Wait(60000)
 
     local connectedPlayersList = GetConnectedPlayers()
+    local Societies = GetSocieties()
 
-    local societiesLenght = GetTableLength(Societies)
-    
     -- Checking if there are connected players and Societies Table not empty.
-    if connectedPlayersList.players > 0 and societiesLenght > 0 then
+    if connectedPlayersList.players > 0 and GetTableLength(Societies) > 0 then
 
       for index, player in pairs (connectedPlayersList.list) do
 
@@ -35,7 +34,7 @@ Citizen.CreateThread(function ()
         end
 
         -- Checking if society exists in configuration file and also exists in Societies Table.
-        if Config.Societies[jobName] and Config.Societies[jobName].Salary.Enabled and Societies[jobName] then
+        if jobName and Societies[jobName] and Config.Societies[jobName] and Config.Societies[jobName].Salary.Enabled then
 
           local societyConfig = Config.Societies[jobName]
           local society       = Societies[jobName]
@@ -54,7 +53,6 @@ Citizen.CreateThread(function ()
               newPlayerGrade = 0
             end
 
-
             local salaryAmount = societyConfig.Salary.Grades[newPlayerGrade].Salary
 
             if society.ledger > salaryAmount then
@@ -67,17 +65,22 @@ Citizen.CreateThread(function ()
 
                 else
 
-                  local canCarryItem = TPZInv.canCarryItem(player.source, societyConfig.Salary.Item, 1)
+                  if societyConfig.Salary.Item ~= nil then
+                    local canCarryItem = TPZInv.canCarryItem(player.source, societyConfig.Salary.Item, 1)
 
-                  if canCarryItem then
+                    if canCarryItem then
                     
-                    local metadata = { salary = salaryAmount, description = player.username, durability = -1 }
-                    TPZInv.addItem(player.source, societyConfig.Salary.Item, 1, metadata)
+                      local metadata = { salary = salaryAmount, description = player.username, durability = -1 }
+                      TPZInv.addItem(player.source, societyConfig.Salary.Item, 1, metadata)
                     
-                    UpdateSocietyLedger(jobName, 'REMOVE', salaryAmount)
+                      UpdateSocietyLedger(jobName, 'REMOVE', salaryAmount)
   
-                  else
+                    else
   
+                    end
+
+                 else
+                     --money
                   end
 
                 end
