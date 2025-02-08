@@ -14,13 +14,11 @@ exports.tpz_core:server().addNewCallBack("tpz_society:getBills", function(source
 	local charidentifier  = xPlayer.getCharacterIdentifier()
 
 	local playerBills     = {}
-	local Billing          = GetBilling()
+	local Billing         = GetBilling()
 
-	if Billing == nil then
+	if ( Billing == nil ) or ( Billing and GetTableLength(Billing) <= 0 ) then
 		return cb({})
 	end
-
-	if GetTableLength(Billing) > 0 then
 
 		for _, res in pairs (Billing) do 
 
@@ -31,8 +29,6 @@ exports.tpz_core:server().addNewCallBack("tpz_society:getBills", function(source
 			end
 
 		end
-
-	end
 
 	return cb(playerBills)
 end)
