@@ -121,7 +121,7 @@ Citizen.CreateThread(function()
 
                             sleep = false
         
-                            local promptGroup, promptList = GetDutyPromptData()
+                            local promptGroup, promptList = GetPromptData()
 
                             local label = CreateVarString(10, 'LITERAL_STRING', Config.PromptKey.label)
                             PromptSetActiveGroupThisFrame(promptGroup, label)
