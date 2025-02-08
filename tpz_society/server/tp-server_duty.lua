@@ -29,29 +29,23 @@ AddEventHandler('tpz_society:server:toggleDutyStatus', function()
   local _source  = source
   local xPlayer  = TPZ.GetPlayer(_source)
 
-  local jobName  = xPlayer.getJob()
+  local jobName = xPlayer.getJob()
   local jobGrade = xPlayer.getJobGrade()
 
   local NotifyData = nil
-  local NotifyType = nil
 
   if string.match(jobName, "off") then 
 
-    jobName = jobName:gsub("%off", "")
-
-    xPlayer.setJob(jobName)
-    xPlayer.setJobGrade(jobGrade)
-
+    jobName   = jobName:gsub("%off", "")
     NotifyData = Locales['DUTY_TOGGLE_ON']
-    NotifyType = "info"
   else
 
-    xPlayer.setJob('off' .. jobName)
-    xPlayer.setJobGrade(jobGrade)
-  
+    jobName    = "off" .. jobName
     NotifyData = Locales['DUTY_TOGGLE_OFF']
-    NotifyType = "info"
   end
 
-  TriggerClientEvent("tpz_notify:sendNotification", _source, NotifyData.title, NotifyData.message, NotifyData.icon, NotifyType, NotifyData.duration)
+  xPlayer.setJob(jobName)
+  xPlayer.setJobGrade(jobGrade)
+
+  TriggerClientEvent("tpz_notify:sendNotification", _source, NotifyData.title, NotifyData.message, NotifyData.icon, "info", NotifyData.duration)
 end)
