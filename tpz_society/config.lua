@@ -41,9 +41,9 @@ Config.Societies = {
 
     ['police'] = { -- The job name.
         
-        JobLabel = "Police Department",
+        JobLabel = "Sheriff's Department",
 
-        InventoryContainerTitle = "Police",
+        InventoryContainerTitle = "Sheriff's Contents",
 
         -- The following coords is where the menu, blips and inventory containers are located.
         -- All the players with this job and allowed grades will be able to open the inventory container.
