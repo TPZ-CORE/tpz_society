@@ -318,7 +318,7 @@ function OpenEmployeeGradeManagement(username, sourceId)
             OpenEmployeeManagement(username, sourceId)
 
         else
-            TriggerServerEvent("tpz_housing:server:setSelectedSourceIdGrade", PlayerData.Job, username, tonumber(sourceId), tonumber(data.current.value), data.current.label)
+            TriggerServerEvent("tpz_society:server:setSelectedSourceIdGrade", PlayerData.Job, username, tonumber(sourceId), tonumber(data.current.value), data.current.label)
             OpenSocietyEmployeesList()
         end
 
