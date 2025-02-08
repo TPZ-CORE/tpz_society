@@ -9,19 +9,18 @@ TriggerEvent("getTPZCore", function(cb) TPZ = cb end)
 
 exports.tpz_core:server().addNewCallBack("tpz_society:getBills", function(source, cb)
 	local _source         = source
-    local xPlayer         = TPZ.GetPlayer(_source)
+	local xPlayer         = TPZ.GetPlayer(_source)
 
-    local charidentifier  = xPlayer.getCharacterIdentifier()
+	local charidentifier  = xPlayer.getCharacterIdentifier()
 
 	local playerBills     = {}
-	local finished        = false
+	local Billing          = GetBilling()
 
 	if Billing == nil then
-		return cb(playerBills)
+		return cb({})
 	end
 
-	local length = GetTableLength(Billing)
-	if length > 0 then
+	if GetTableLength(Billing) > 0 then
 
 		for _, res in pairs (Billing) do 
 
@@ -31,20 +30,11 @@ exports.tpz_core:server().addNewCallBack("tpz_society:getBills", function(source
 
 			end
 
-			if next (Billing, _) == nil then
-				finished = true
-			end
-
 		end
-	else
-		finished = true
+
 	end
 
-	while not finished do
-		Wait(250)
-	end
-
-	cb(playerBills)
+	return cb(playerBills)
 end)
 
 -- @parameter job : Required parameter for the following callback to check if Society is null or exists.
