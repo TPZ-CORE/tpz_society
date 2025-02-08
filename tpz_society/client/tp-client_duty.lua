@@ -30,7 +30,7 @@ Citizen.CreateThread(function()
         
         local sleep   = true
         local player  = PlayerPedId()
-        local coords  = GetEntityCoords(PlayerPedId())
+        local coords  = GetEntityCoords(player)
 
         local isDead  = IsEntityDead(player)
         local PlayerData = GetPlayerData()
