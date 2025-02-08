@@ -20,8 +20,9 @@ Citizen.CreateThread(function ()
     if connectedPlayersList.players > 0 and GetTableLength(Societies) > 0 then
 
       for index, player in pairs (connectedPlayersList.list) do
-
-        local xPlayer  = TPZ.GetPlayer(player.source)
+        player.source   = tonumber(player.source)
+        
+        local xPlayer   = TPZ.GetPlayer(player.source)
         local jobName  = xPlayer.getJob()
         local jobGrade = xPlayer.getJobGrade()
 
@@ -55,13 +56,11 @@ Citizen.CreateThread(function ()
 
             local salaryAmount = societyConfig.Salary.Grades[newPlayerGrade].Salary
 
-            if society.ledger > salaryAmount then
-
-              if salaryAmount > 0 then
+            if society.ledger >= salaryAmount and salaryAmount > 0 then
 
                 if Config.TPZBanking then
                   
-                  TriggerEvent('tpz_banking:depositDefaultBankingAccount', tonumber(player.source), salaryAmount, Locales['BANKING_SALARY_REASON'], true)
+                  --TriggerEvent('tpz_banking:depositDefaultBankingAccount', tonumber(player.source), salaryAmount, Locales['BANKING_SALARY_REASON'], true)
 
                 else
 
@@ -83,12 +82,12 @@ Citizen.CreateThread(function ()
                      --money
                   end
 
-                end
+              
 
               end
 
             else
-
+-- warn about no money on ledger?
             end
 
           end
