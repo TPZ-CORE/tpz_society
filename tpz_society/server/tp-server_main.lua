@@ -1,7 +1,4 @@
-local TPZ     = {}
-
-TriggerEvent("getTPZCore", function(cb) TPZ = cb end)
-
+local TPZ       = exports.tpz_core:getCoreAPI()
 local Societies = {}
 
 -----------------------------------------------------------
