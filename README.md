@@ -15,6 +15,9 @@
 
 2. Add `ensure tpz_society` after the **REQUIREMENTS** in the resources.cfg or server.cfg, depends where your scripts are located.
 
+## Development API
+
+
 # Important Information
 
 ## Ledger & Salaries
@@ -23,10 +26,4 @@ For a society to be able to be registered, the job must be inserted into `societ
 
 (!) A society will be registered only after the script is restarted and not while server is running.
 
-When creating manually a container on `containers` database table, the `id` will be required for adding it on the Config.Societies where the job name is located! Make sure the container `name` parameter, is the same as the job name.
-
-## Billing
-
-A billing system is functional only with TPZ-Banking.
-
-When a society (job), creates a bill on a player, the bills must be paid directly from the Bank and not from a Menu like other frameworks.
+When creating manually a container on `containers` database table, the `id` will be required for adding it on the Config.Societies where the job name is located! Make sure the container `name` parameter, is the same as the exact job name.
