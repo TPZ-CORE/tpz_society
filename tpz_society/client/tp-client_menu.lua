@@ -34,7 +34,6 @@ local CloseMenuProperly = function ()
 
     TaskStandStill(PlayerPedId(), 1)
     PlayerData.HasMenuOpen = false
-    TriggerEvent("tpz_hud:setHiddenStatus", false)
 
     CurrentLocationIndex = nil
 end
@@ -53,7 +52,6 @@ function OpenSocietyManagementMenu(index)
         CurrentLocationIndex = index
     end
 
-    TriggerEvent("tpz_hud:setHiddenStatus", true)
     TaskStandStill(PlayerPedId(), -1)
 
     local options = {
