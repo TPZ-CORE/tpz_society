@@ -101,43 +101,49 @@ Citizen.CreateThread(function()
 
         if not isDead and not PlayerData.HasMenuOpen and PlayerData.Loaded then
 
-            for index, locConfig in pairs(Config.Societies) do
+            local isSecondaryInventoryActive = exports.tpz_inventory:getInventoryAPI().isSecondaryInventoryActive()
 
-                local playerDist  = vector3(coords.x, coords.y, coords.z)
+            if not isSecondaryInventoryActive then
 
-                for _index, location in pairs (locConfig.Locations) do
-                    local societyDist = vector3(location.Coords.x, location.Coords.y, location.Coords.z)
-                    local distance    = #(playerDist - societyDist)
+                for index, locConfig in pairs(Config.Societies) do
 
-                    if PlayerData.Job == index then
-                        
-                        -- Creating marker on the location (If enabled).
-                        if locConfig.Marker.Enabled and distance <= locConfig.Marker.DisplayDistance then
-                            sleep = false
-                            local dr, dg, db, da = locConfig.Marker.RGBA.r, locConfig.Marker.RGBA.g, locConfig.Marker.RGBA.b, locConfig.Marker.RGBA.a
-                            Citizen.InvokeNative(0x2A32FAA57B937173, 0x94FDAE17, location.Coords.x, location.Coords.y, location.Coords.z - 1.0, 0, 0, 0, 0, 0, 0, 1.7, 1.7, 0.4, dr, dg, db, da, 0, 0, 2, 0, 0, 0, 0)
-
+                    local playerDist  = vector3(coords.x, coords.y, coords.z)
+    
+                    for _index, location in pairs (locConfig.Locations) do
+                        local societyDist = vector3(location.Coords.x, location.Coords.y, location.Coords.z)
+                        local distance    = #(playerDist - societyDist)
+    
+                        if PlayerData.Job == index then
+                            
+                            -- Creating marker on the location (If enabled).
+                            if locConfig.Marker.Enabled and distance <= locConfig.Marker.DisplayDistance then
+                                sleep = false
+                                local dr, dg, db, da = locConfig.Marker.RGBA.r, locConfig.Marker.RGBA.g, locConfig.Marker.RGBA.b, locConfig.Marker.RGBA.a
+                                Citizen.InvokeNative(0x2A32FAA57B937173, 0x94FDAE17, location.Coords.x, location.Coords.y, location.Coords.z - 1.0, 0, 0, 0, 0, 0, 0, 1.7, 1.7, 0.4, dr, dg, db, da, 0, 0, 2, 0, 0, 0, 0)
+    
+                            end
+        
+                            if distance <= locConfig.ActionDistance then
+    
+                                sleep = false
+            
+                                local promptGroup, promptList = GetPromptData()
+    
+                                local label = CreateVarString(10, 'LITERAL_STRING', Config.PromptKey.label)
+                                PromptSetActiveGroupThisFrame(promptGroup, label)
+            
+                                if PromptHasHoldModeCompleted(promptList) then
+            
+                                    OpenSocietyManagementMenu(_index)
+            
+                                    Wait(2000)
+                                end
+                            end
+    
                         end
     
-                        if distance <= locConfig.ActionDistance then
-
-                            sleep = false
-        
-                            local promptGroup, promptList = GetPromptData()
-
-                            local label = CreateVarString(10, 'LITERAL_STRING', Config.PromptKey.label)
-                            PromptSetActiveGroupThisFrame(promptGroup, label)
-        
-                            if PromptHasHoldModeCompleted(promptList) then
-        
-                                OpenSocietyManagementMenu(_index)
-        
-                                Wait(2000)
-                            end
-                        end
-
                     end
-
+    
                 end
 
             end
