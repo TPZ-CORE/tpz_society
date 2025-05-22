@@ -27,3 +27,7 @@ For a society to be able to be registered, the job must be inserted into `societ
 (!) A society will be registered only after the script is restarted and not while server is running.
 
 When creating manually a container on `containers` database table, the `id` will be required for adding it on the Config.Societies where the job name is located! Make sure the container `name` parameter, is the same as the exact job name.
+
+## Screenshot Displays
+
+![image](https://github.com/user-attachments/assets/0eb6e807-c251-4a2f-95f2-ee4b012b143f)
