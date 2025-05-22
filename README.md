@@ -17,6 +17,18 @@
 
 ## Development API
 
+**Getter**
+The specified export below is used on the `server` to use the API properly and faster.
+
+```lua
+local SocietyAPI = exports.tpz_society:getAPI()
+```
+
+| Export                                                                    | Description                                                                 | Returned Type |
+|---------------------------------------------------------------------------|-----------------------------------------------------------------------------|---------------|
+| `SocietyAPI.updateSocietyLedgerAccount(job, transactionType, amount)`     | Updates a society ledger account through a transaction type (ADD, REMOVE).  | N/A           |
+| `SocietyAPI.createNewBill(source, targetId, isJob, cost, reason, issuer)` | Creates a bill on the selected player source.                               | N/A           |
+| `SocietyAPI.getPlayerBills(source)`                                       | Returns all the available player bills.                                     | Table         |
 
 ## Information
 
