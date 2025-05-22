@@ -26,9 +26,19 @@ local SocietyAPI = exports.tpz_society:getAPI()
 
 | Export                                                                    | Description                                                                 | Returned Type |
 |---------------------------------------------------------------------------|-----------------------------------------------------------------------------|---------------|
-| `SocietyAPI.updateSocietyLedgerAccount(job, transactionType, amount)`     | Updates a society ledger account through a transaction type (ADD, REMOVE).  | N/A           |
+| `SocietyAPI.updateSocietyLedgerAccount(job, transactionType, amount)`     | Updates a registered society ledger account through a transaction type.     | N/A           |
 | `SocietyAPI.createNewBill(source, targetId, isJob, cost, reason, issuer)` | Creates a bill on the selected player source.                               | N/A           |
 | `SocietyAPI.getPlayerBills(source)`                                       | Returns all the available player bills.                                     | Table         |
+
+## Parameters Explanation
+
+| Parameter                                                                          | Description                                                                                                                                          |
+|------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `source`                                                                           | Requires an online player id source target                                                                                                           | 
+| `transactionType`                                                                  | The available transaction types are `ADD` and `REMOVE`                                                                                               | 
+| `isJob`                                                                            | It requires a number input `0` - `1` (0 = false, 1 = true) in case the bill that has been created is from a society job (such as saloon, police).    | 
+| `reason`                                                                           | It requires a reason for a bill, the reason length must be very short such as (DEPOSIT, TAX, POLICE, SALOON)                                         | 
+| `issuer`                                                                           | It requires an issuer for a bill, the issuer length must be very short such as (POLICE, SALOON, GOVERNMENT)                                          | 
 
 ## Information
 
