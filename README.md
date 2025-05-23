@@ -15,6 +15,14 @@
 
 2. Add `ensure tpz_society` after the **REQUIREMENTS** in the resources.cfg or server.cfg, depends where your scripts are located.
 
+## Commands 
+
+| Command                  | Ace Permission                     | Description                                                           |
+|--------------------------|------------------------------------|-----------------------------------------------------------------------|
+| registersociety [job]    | tpzcore.society.register_society   | Register a non-registered society job for the ledger account.         |
+
+- The ace permission: `tpzcore.all` Gives permissioms to all commands and actions (FOR ALL OFFICIAL PUBLISHED FREE SCRIPTS).
+
 ## Development API
 
 **Getter**
