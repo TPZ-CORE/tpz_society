@@ -67,6 +67,40 @@ RegisterCommand(Config.CreateBill.Command, function(source, args, rawCommand)
 
 end, false)
 
+RegisterCommand(Config.RegisterSociety.Command, function(source, args, rawCommand)
+    local _source = source
+    local xPlayer = TPZ.GetPlayer(_source)
+
+    local hasAcePermissions           = xPlayer.hasPermissionsByAce("tpzcore.society.register_society")
+    local hasAdministratorPermissions = hasAcePermissions
+
+    if not hasAcePermissions then
+        hasAdministratorPermissions = xPlayer.hasAdministratorPermissions(Config.RegisterSociety.Groups, Config.RegisterSociety.DiscordRoles)
+    end
+
+    if hasAcePermissions or hasAdministratorPermissions then
+
+        local targetSocietyJob = string.lower(args[1])
+
+        local Societies        = GetSocieties()
+
+        if (Societies[targetSocietyJob]) then
+            SendNotification(_source, Locales['SOCIETY_ALREADY_REGISTERED'], "error")
+            return
+        end
+
+        Societies[targetSocietyJob] = { job = targetSocietyJob, ledger = 0 }
+    
+        exports.ghmattimysql:execute("INSERT INTO `society` ( `job`, `ledger`) VALUES ( @job, @ledger)", { ['job'] = targetSocietyJob, ['ledger'] = 0 })
+
+        SendNotification(_source, Locales['SOCIETY_REGISTERED'], "success")
+        
+    else
+        SendNotification(_source, Locales['NO_PERMISSIONS'], "error")
+    end
+
+end, false)
+
 -----------------------------------------------------------
 --[[ Chat Suggestion Registrations ]]--
 -----------------------------------------------------------
@@ -83,6 +117,10 @@ AddEventHandler("tpz_society:server:addChatSuggestions", function()
     TriggerClientEvent("chat:addSuggestion", _source, "/" .. Config.CreateBill.Command, Config.CreateBill.Description, {
         { name = "Id", help = 'Player ID' },
         { name = "Amount", help = 'Bill Amount' },
+    })
+
+    TriggerClientEvent("chat:addSuggestion", _source, "/" .. Config.RegisterSociety.Command, Config.RegisterSociety.Description, {
+        { name = "Job", help = 'Job Society Name' },
     })
 
 end)
