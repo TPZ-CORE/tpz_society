@@ -13,7 +13,7 @@ local LoadBilling = function()
 
   exports["ghmattimysql"]:execute("SELECT * FROM billing ORDER BY id", {}, function(result)
 
-    local length = GetTableLength(result)
+    local length = TPZ.GetTableLength(result)
     
     if length > 0 then
 
@@ -122,7 +122,7 @@ function GetPlayerBills(source)
 
 	local Billing     = GetBilling()
 
-	if ( Billing == nil ) or ( Billing and GetTableLength(Billing) <= 0 ) then
+	if ( Billing == nil ) or ( Billing and TPZ.GetTableLength(Billing) <= 0 ) then
 		return {}
 	end
 
