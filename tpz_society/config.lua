@@ -32,6 +32,15 @@ Config.UnemployedJob = "unemployed"
 Config.CreateBill   = { Command = "createbill", Description = "Create a bill on the selected player id", MaximumNearestDistanceFromTarget = 2.0 }
 Config.DisplayBills = { Command = "bills", Description = "Displays all the available bills." }
 
+Config.RegisterSociety = { 
+    Command       = "registersociety", 
+    Description   = "Register a non-registered society job for the ledger account.",
+
+    Groups        = { 'admin', 'mod' },
+    DiscordRoles  = { 111111111111, 22222222222222 },
+}
+
+
 -----------------------------------------------------------
 --[[ Society Locations ]]--
 -----------------------------------------------------------
