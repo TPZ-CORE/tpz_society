@@ -26,7 +26,7 @@ end
 local GetConnectedPlayers = function()
   local data = { list = {}, players = 0 }
 
-  local connectedPlayersLength = GetTableLength(ConnectedPlayers)
+  local connectedPlayersLength = TPZ.GetTableLength(ConnectedPlayers)
 
   if connectedPlayersLength > 0 then
 
@@ -95,7 +95,7 @@ Citizen.CreateThread(function ()
     local Societies = GetSocieties()
 
     -- Checking if there are connected players and Societies Table not empty.
-    if connectedPlayersList.players > 0 and GetTableLength(Societies) > 0 then
+    if connectedPlayersList.players > 0 and TPZ.GetTableLength(Societies) > 0 then
 
       for index, player in pairs (connectedPlayersList.list) do
         player.source   = tonumber(player.source)
