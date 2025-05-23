@@ -94,7 +94,7 @@ function OpenSocietyManagementMenu(index)
 
                 CloseMenuProperly()
 
-                Wait(500)
+                Wait(250)
 
                 TriggerEvent("tpz_inventory:openInventoryContainerById", containerId, Config.Societies[PlayerData.Job].InventoryContainerTitle, false)
 
@@ -340,70 +340,74 @@ function OpenSocietyLedgerMenu()
     local PlayerData = GetPlayerData()
 
     MenuData.CloseAll()
+    
+    TriggerEvent("tpz_core:ExecuteServerCallBack", "tpz_society:callbacks:getSocietyData", function(result)
 
-    local options = {
-        { label = Locales['MANAGEMENT_MENU_LEDGER_DEPOSIT'],  value = 'deposit',  desc = ""},
+        local options = {
+            { label = Locales['MANAGEMENT_MENU_LEDGER_DEPOSIT'],  value = 'deposit',  desc = string.format(Locales['LEDGER_ACCOUNT'], result.ledger)},
+            { label = Locales['MANAGEMENT_MENU_LEDGER_WITHDRAW'], value = 'withdraw', desc = string.format(Locales['LEDGER_ACCOUNT'], result.ledger)},
 
-        { label = Locales['MANAGEMENT_MENU_LEDGER_WITHDRAW'], value = 'withdraw', desc = ""},
-        { label = Locales['MANAGEMENT_MENU_BACK'],            value = 'backup',   desc = ""},
-    }
-
-    MenuData.Open('default', GetCurrentResourceName(), 'ledger_menu',
-
-    {
-        title    = Locales['MANAGEMENT_MENU_LEDGER'],
-        subtext  = "",
-        align    = "left",
-        elements = options,
-    },
-
-    function(data, menu)
-
-        if (data.current.value == "backup") then
+            { label = Locales['MANAGEMENT_MENU_BACK'],            value = 'backup',   desc = ""},
+        }
+    
+        MenuData.Open('default', GetCurrentResourceName(), 'ledger_menu',
+    
+        {
+            title    = Locales['MANAGEMENT_MENU_LEDGER'],
+            subtext  = "",
+            align    = "left",
+            elements = options,
+        },
+    
+        function(data, menu)
+    
+            if (data.current.value == "backup") then
+                OpenSocietyManagementMenu()
+    
+            elseif (data.current.value == "withdraw") or (data.current.value == "deposit") then
+    
+                local inputData = {
+                    title        = Locales['MANAGEMENT_MENU_' .. string.upper(data.current.value) .. '_TITLE'],
+                    desc         = Locales['MANAGEMENT_MENU_' .. string.upper(data.current.value) .. '_DESCRIPTION'],
+                    buttonparam1 = Locales['MENU_ACCEPT'],
+                    buttonparam2 = Locales['MENU_DECLINE'],
+                 }
+                                            
+                 TriggerEvent("tpz_inputs:getTextInput", inputData, function(cb)
+    
+                    local inputId = tonumber(cb)
+    
+                    if inputId ~= nil and inputId ~= 0 and inputId > 0 then
+    
+                        if data.current.value == 'deposit' then
+                            TriggerServerEvent("tpz_society:server:depositJobLedger", PlayerData.Job, inputId )
+    
+                        elseif data.current.value == 'withdraw' then
+                            TriggerServerEvent("tpz_society:server:withdrawJobLedger", PlayerData.Job, inputId )
+                        end
+    
+                        Wait(500)
+                        OpenSocietyLedgerMenu()
+                        
+                    else
+    
+                        if cb ~= 'DECLINE' then
+                            SendNotification(nil, Locales['INVALID_INPUT'], "error")
+                        end
+    
+                    end
+    
+                end) 
+    
+            end
+    
+    
+        end,
+    
+        function(data, menu)
             OpenSocietyManagementMenu()
+        end)
 
-        elseif (data.current.value == "withdraw") or (data.current.value == "deposit") then
-
-            local inputData = {
-                title        = Locales['MANAGEMENT_MENU_' .. string.upper(data.current.value) .. '_TITLE'],
-                desc         = Locales['MANAGEMENT_MENU_' .. string.upper(data.current.value) .. '_DESCRIPTION'],
-                buttonparam1 = Locales['MENU_ACCEPT'],
-                buttonparam2 = Locales['MENU_DECLINE'],
-             }
-                                        
-             TriggerEvent("tpz_inputs:getTextInput", inputData, function(cb)
-
-                local inputId = tonumber(cb)
-
-                if inputId ~= nil and inputId ~= 0 and inputId > 0 then
-
-                    if data.current.value == 'deposit' then
-                        TriggerServerEvent("tpz_society:server:depositJobLedger", PlayerData.Job, inputId )
-
-                    elseif data.current.value == 'withdraw' then
-                        TriggerServerEvent("tpz_society:server:withdrawJobLedger", PlayerData.Job, inputId )
-                    end
-
-                    Wait(500)
-                    OpenSocietyLedgerMenu()
-                    
-                else
-
-                    if cb ~= 'DECLINE' then
-                        SendNotification(nil, Locales['INVALID_INPUT'], "error")
-                    end
-
-                end
-
-            end) 
-
-        end
-
-
-    end,
-
-    function(data, menu)
-        OpenSocietyManagementMenu()
     end)
 
 end
