@@ -40,13 +40,6 @@ function GetSocieties()
     return Societies
 end
 
--- @GetTableLength returns the length of a table.
-function GetTableLength(T)
-    local count = 0
-    for _ in pairs(T) do count = count + 1 end
-    return count
-end
-
 -----------------------------------------------------------
 --[[ Local Functions  ]]--
 -----------------------------------------------------------
@@ -84,7 +77,7 @@ AddEventHandler('onResourceStart', function(resourceName)
 	end
 
     exports["ghmattimysql"]:execute("SELECT * FROM society", {}, function(result)
-        local tableLength = GetTableLength(result)
+        local tableLength = TPZ.GetTableLength(result)
 
         if tableLength > 0 then
             for _, res in pairs (result) do Societies[res.job] = {} Societies[res.job] = res end
@@ -357,7 +350,7 @@ Citizen.CreateThread(function()
     
         if shouldSave then
 
-            if Societies and GetTableLength(Societies) > 0 then
+            if Societies and TPZ.GetTableLength(Societies) > 0 then
                 
                 for _, society in pairs (Societies) do
 
@@ -371,7 +364,7 @@ Citizen.CreateThread(function()
                 end
 
                 if Config.Debug then
-                    print( " (" .. GetTableLength(Societies) .. ") societies have been saved.")
+                    print( " (" .. TPZ.GetTableLength(Societies) .. ") societies have been saved.")
                 end
 
             end
