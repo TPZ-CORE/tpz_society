@@ -46,7 +46,8 @@ Locales = {
     ['MANAGEMENT_MENU_WITHDRAW_DESCRIPTION']  = "Insert the amount you want to withdraw from the society ledger.",
     ['NOT_ENOUGH_MONEY_TO_WITHDRAW']          = "~e~Ledger does not have enough money to withdraw.",
     ['LEDGER_WITHDREW']                       = "You have successfully withdrew ~o~$%s dollars.",
-
+    ['LEDGER_ACCOUNT']                        = "Society Account: %s Dollars",
+    
     ['MANAGEMENT_MENU_INVENTORY']             = "Storage Contents",
     ['MANAGEMENT_MENU_LEDGER']                = "Ledger",
     ['MANAGEMENT_MENU_LEDGER_DEPOSIT']        = "Deposit",
