@@ -73,6 +73,10 @@ Locales = {
     ['DEVTOOLS_INJECTION_DETECTED_TITLE_LOG'] = "DevTools / Injection Cheat Found!",
     ['DEVTOOLS_INJECTION_DETECTED']           = "You have been kicked due to cheating by using DevTools or Injection cheat.",
 
+    ['NO_PERMISSIONS']                        = "~e~Not enough permissions to perform this command.",
+    ['SOCIETY_ALREADY_REGISTERED']            = "~e~The specified society job has been already registered.",
+    ['SOCIETY_REGISTERED']                    = "Successfully registed a new society job.",
+    
     ['DUTY_TOGGLE_ON'] = { 
         title = "Duty", 
         message = "You are now on duty.",
