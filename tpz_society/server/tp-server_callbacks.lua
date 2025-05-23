@@ -18,6 +18,19 @@ exports.tpz_core:getCoreAPI().addNewCallBack("tpz_society:callbacks:isAllowedToC
 	return cb(Societies[data.job] == nil)
 end)
 
+exports.tpz_core:getCoreAPI().addNewCallBack("tpz_society:callbacks:getSocietyData", function(source, cb)
+	local _source   = source
+	local xPlayer   = TPZ.GetPlayer(_source)
+	local job       = xPlayer.getJob()
+
+	local Societies = GetSocieties()
+
+	if not Societies[job] then
+		return nil
+	end
+
+	return cb(Societies[job])
+end)
 
 exports.tpz_core:getCoreAPI().addNewCallBack("tpz_society:callbacks:getEmployees", function(source, cb, data)
 
