@@ -102,29 +102,3 @@ Citizen.CreateThread(function ()
 
     end
 end)
-
-
---[[-------------------------------------------------------
- General Functions
-]]---------------------------------------------------------
-
-function GetNearestPlayers(distance)
-	local closestDistance = distance
-	local playerPed = PlayerPedId()
-	local coords = GetEntityCoords(playerPed, true, true)
-	local closestPlayers = {}
-
-	for _, player in pairs(GetActivePlayers()) do
-		local target = GetPlayerPed(player)
-
-		if target ~= playerPed then
-			local targetCoords = GetEntityCoords(target, true, true)
-			local distance = #(targetCoords - coords)
-
-			if distance < closestDistance then
-				table.insert(closestPlayers, player)
-			end
-		end
-	end
-	return closestPlayers
-end
