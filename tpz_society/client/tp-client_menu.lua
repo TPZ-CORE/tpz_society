@@ -179,7 +179,7 @@ function OpenSocietyEmployeesList()
     
             elseif (data.current.value == "hire") then
 
-                local nearestPlayers = GetNearestPlayers(3.0)
+                local nearestPlayers = TPZ.GetNearestPlayers(3.0)
                 local foundPlayer    = false
 
                 local inputData = {
