@@ -75,7 +75,12 @@ Config.Societies = {
         ActiveDuty = true,
 
         DutyLocations = {
-            [1] = { Coords = { x = 2507.456, y = -1301.41, z = 48.953, h = 12.058819770813 } },
+            [1] = { Coords = { x = 2507.456, y = -1301.41, z = 48.953 }, }, -- saint denis
+            [2] = { Coords = { x = -279.200, y = 805.9745, z = 119.38 }, }, -- valentine
+            [3] = { Coords = { x = 2906.184, y = 1308.746, z = 44.937 }, }, -- annesburg
+            [4] = { Coords = { x = 1359.206, y = -1299.75, z = 77.760 }, }, -- rhodes
+            [5] = { Coords = { x = -768.029, y = -1266.34, z = 44.053 }, }, -- blackwater
+            [6] = { Coords = { x = -1812.31, y = -355.388, z = 164.64 }, }, -- strawberry
         },
 
         BlipData = {
@@ -86,7 +91,7 @@ Config.Societies = {
         
         Marker = { -- If this is enabled, a circular marker will be displayed when close to the warehouse actions.
             Enabled = true,
-            RGBA    = {r = 240, g = 230, b = 140, a = 50},
+            RGBA    = {r = 255, g = 255, b = 255, a = 50},
             DisplayDistance = 5.0,
         },
 
@@ -170,7 +175,7 @@ Config.Societies = {
         
         Marker = { -- If this is enabled, a circular marker will be displayed when close to the warehouse actions.
             Enabled = true,
-            RGBA    = {r = 240, g = 230, b = 140, a = 50},
+            RGBA    = {r = 255, g = 255, b = 255, a = 50},
             DisplayDistance = 5.0,
         },
 
