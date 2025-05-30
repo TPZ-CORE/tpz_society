@@ -82,6 +82,11 @@ Config.Societies = {
             [5] = { Coords = { x = -768.029, y = -1266.34, z = 44.053 }, }, -- blackwater
             [6] = { Coords = { x = -1812.31, y = -355.388, z = 164.64 }, }, -- strawberry
         },
+        
+        Store = { 
+            Enabled = true, -- Set it to false if you dont want to have a store included.
+            StoreIndexName = "POLICE", -- tpz_stores support as default through an export call. 
+        },
 
         BlipData = {
             Enabled = true,
@@ -119,12 +124,6 @@ Config.Societies = {
                 [3] = { Salary = 0 }, -- Boss (Handles Ledger, no need for salary).
             },
         }, 
-        
-        Webhooking = { 
-            Enabled = false, -- Set it to false if you dont use any webhook, otherwise all the society actions will be sent to the webhook url.
-            Url = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", 
-            Color = 10038562,
-        },
 
         BossGrade      = 3, -- The boss grade which will be able to manage all society actions. 
         RecruitGrade   = 0, -- The recruit grade when someone is hiring a player to the job.
@@ -134,6 +133,12 @@ Config.Societies = {
             [1] = "Sheriff",
             [2] = "Marshal",
             [3] = "Boss",
+        },
+        
+        Webhooking = { 
+            Enabled = false, -- Set it to false if you dont use any webhook, otherwise all the society actions will be sent to the webhook url.
+            Url = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", 
+            Color = 10038562,
         },
 
     },
@@ -165,6 +170,11 @@ Config.Societies = {
             [2] = { Coords = { x = 1368.716, y = -1306.76, z = 76.970 } }, -- Rhodes
             [3] = { Coords = { x = 2726.695, y = -1231.99, z = 50.366 } }, -- Saint Denis
             [4] = { Coords = { x = -1806.84, y = -432.444, z = 158.83 } }, -- Strawberry
+        },
+        
+        Store = { 
+            Enabled = false, -- Set it to false if you dont want to have a store included.
+            StoreIndexName = "", -- tpz_stores support as default through an export call. 
         },
 
         BlipData = {
@@ -201,12 +211,6 @@ Config.Societies = {
                 [1] = { Salary = 5 },
             },
         }, 
-        
-        Webhooking = { 
-            Enabled = false, -- Set it to false if you dont use any webhook, otherwise all the society actions will be sent to the webhook url.
-            Url = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", 
-            Color = 10038562,
-        },
 
         BossGrade      = 1, -- The boss grade which will be able to manage all society actions. 
         RecruitGrade   = 0, -- The recruit grade when someone is hiring a player to the job.
@@ -214,6 +218,12 @@ Config.Societies = {
         GradesList      = {
             [0] = "Recruit",
             [1] = "Boss",
+        },
+        
+        Webhooking = { 
+            Enabled = false, -- Set it to false if you dont use any webhook, otherwise all the society actions will be sent to the webhook url.
+            Url = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", 
+            Color = 10038562,
         },
 
     },
