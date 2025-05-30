@@ -86,6 +86,7 @@ Config.Societies = {
         Store = { 
             Enabled = true, -- Set it to false if you dont want to have a store included.
             StoreIndexName = "POLICE", -- tpz_stores support as default through an export call. 
+            MenuTitle = "Buy Police Gear and Weaponry", 
         },
 
         BlipData = {
@@ -175,6 +176,7 @@ Config.Societies = {
         Store = { 
             Enabled = false, -- Set it to false if you dont want to have a store included.
             StoreIndexName = "", -- tpz_stores support as default through an export call. 
+            MenuTitle = "",
         },
 
         BlipData = {
