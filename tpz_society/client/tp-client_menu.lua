@@ -67,11 +67,11 @@ function OpenSocietyManagementMenu(index)
 
    if Config.Societies[PlayerData.Job].Store.Enabled then
       options = {
-         { label = Locales['MANAGEMENT_MENU_EMPLOYEES'], value = 'employees', desc = ""},
-         { label = Locales['MANAGEMENT_MENU_INVENTORY'], value = 'storage',   desc = ""},
-         { label = Locales['MANAGEMENT_MENU_LEDGER'],    value = 'ledger',    desc = ""},
-         { label = Locales['MANAGEMENT_MENU_STORE'],     value = 'store',     desc = ""},
-         { label = Locales['MANAGEMENT_MENU_EXIT'],      value = 'backup',    desc = ""},
+         { label = Locales['MANAGEMENT_MENU_EMPLOYEES'],              value = 'employees', desc = ""},
+         { label = Locales['MANAGEMENT_MENU_INVENTORY'],              value = 'storage',   desc = ""},
+         { label = Locales['MANAGEMENT_MENU_LEDGER'],                 value = 'ledger',    desc = ""},
+         { label = Config.Societies[PlayerData.Job].Store.MenuTitle,  value = 'store',     desc = ""},
+         { label = Locales['MANAGEMENT_MENU_EXIT'],                   value = 'backup',    desc = ""},
       }
    end
 
@@ -133,9 +133,15 @@ function OpenSocietyManagementMenu(index)
             end
 
             OpenSocietyLedgerMenu()
-        end
+        elseif (data.current.value == "store") then
 
+            local storeName = Config.Societies[PlayerData.Job].Store.StoreIndexName
 
+            CloseMenuProperly()
+
+            Wait(500)
+            exports.tpz_stores:OpenStoreByName(storeName)
+         end
     end,
 
     function(data, menu)
