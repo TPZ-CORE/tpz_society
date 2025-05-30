@@ -65,6 +65,16 @@ function OpenSocietyManagementMenu(index)
         { label = Locales['MANAGEMENT_MENU_EXIT'],      value = 'backup',    desc = ""},
     }
 
+   if Config.Societies[PlayerData.Job].Store.Enabled then
+      options = {
+         { label = Locales['MANAGEMENT_MENU_EMPLOYEES'], value = 'employees', desc = ""},
+         { label = Locales['MANAGEMENT_MENU_INVENTORY'], value = 'storage',   desc = ""},
+         { label = Locales['MANAGEMENT_MENU_LEDGER'],    value = 'ledger',    desc = ""},
+         { label = Locales['MANAGEMENT_MENU_STORE'],     value = 'store',     desc = ""},
+         { label = Locales['MANAGEMENT_MENU_EXIT'],      value = 'backup',    desc = ""},
+      }
+   end
+
     MenuData.Open('default', GetCurrentResourceName(), 'main_menu',
 
     {
