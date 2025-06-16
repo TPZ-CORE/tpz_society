@@ -28,4 +28,6 @@ exports('getAPI', function()
     UpdateSocietyLedger(job, transactionType, amount)
   end
 
+    return self
+
 end)
