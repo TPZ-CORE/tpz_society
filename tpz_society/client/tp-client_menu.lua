@@ -40,6 +40,21 @@ local CloseMenuProperly = function ()
     CurrentLocationIndex = nil
 end
 
+local GetTaxTime = function(taxTime)
+    -- taxTime is in minutes, convert to days
+    local daysPassed = math.floor(taxTime / 1440)
+
+    -- we want remaining days instead of passed days
+    local daysLeft = 7 - daysPassed
+
+    -- never go below 0
+    if daysLeft < 0 then
+        daysLeft = 0
+    end
+
+    return daysLeft
+end
+
 --[[ ------------------------------------------------
    Menu Actions
 ]]---------------------------------------------------
@@ -56,96 +71,91 @@ function OpenSocietyManagementMenu(index)
 
     TaskStandStill(PlayerPedId(), -1)
 
-    local options = {
-        { label = Locales['MANAGEMENT_MENU_EMPLOYEES'], value = 'employees', desc = ""},
+    TriggerEvent("tpz_core:ExecuteServerCallBack", "tpz_society:callbacks:getSocietyData", function(result)
 
-        { label = Locales['MANAGEMENT_MENU_INVENTORY'], value = 'storage',   desc = ""},
-        { label = Locales['MANAGEMENT_MENU_LEDGER'],    value = 'ledger',    desc = ""},
-
-        { label = Locales['MANAGEMENT_MENU_EXIT'],      value = 'backup',    desc = ""},
-    }
-
-   if Config.Societies[PlayerData.Job].Store.Enabled then
-      options = {
-         { label = Locales['MANAGEMENT_MENU_EMPLOYEES'],              value = 'employees', desc = ""},
-         { label = Locales['MANAGEMENT_MENU_INVENTORY'],              value = 'storage',   desc = ""},
-         { label = Locales['MANAGEMENT_MENU_LEDGER'],                 value = 'ledger',    desc = ""},
-         { label = Config.Societies[PlayerData.Job].Store.MenuTitle,  value = 'store',     desc = ""},
-         { label = Locales['MANAGEMENT_MENU_EXIT'],                   value = 'backup',    desc = ""},
-      }
-   end
-
-    MenuData.Open('default', GetCurrentResourceName(), 'main_menu',
-
-    {
-        title    = Locales['MANAGEMENT_MENU_TITLE'],
-        subtext  = "",
-        align    = "left",
-        elements = options,
-    },
-
-    function(data, menu)
-
-        if (data.current.value == "backup") then
-            CloseMenuProperly()
-
-        elseif (data.current.value == 'storage') then
-
-            local hasPermission = HasStoragePermission()
-
-            if hasPermission then
-
-                local containerId = Config.Societies[PlayerData.Job].Locations[CurrentLocationIndex].InventoryContainer.containerId
-
-                if containerId == false then
-                    SendNotification(nil, Locales['STORAGE_INVALID'], "error")
+        local options = {
+            { label = Locales['MANAGEMENT_MENU_EMPLOYEES'], value = 'employees', desc = ""},
+    
+            { label = Locales['MANAGEMENT_MENU_INVENTORY'], value = 'storage',   desc = ""},
+            { label = Locales['MANAGEMENT_MENU_LEDGER'],    value = 'ledger',    desc = ""},
+    
+            { label = Locales['MANAGEMENT_MENU_EXIT'],      value = 'backup',    desc = ""},
+        }
+    
+        local menuDescription = ''
+    
+        if Config.Societies[PlayerData.Job].Tax.Enabled then
+            local getTaxTime = GetTaxTime(result.tax_duration)
+            menuDescription  = string.format(Locales['MENU_DESCRIPTION_TAX'], getTaxTime, Config.Societies[PlayerData.Job].Tax.PaymentDuration, Config.Societies[PlayerData.Job].Tax.PayAmount)
+        end
+    
+        MenuData.Open('default', GetCurrentResourceName(), 'main_menu',
+    
+        {
+            title    = Locales['MANAGEMENT_MENU_TITLE'],
+            subtext  = menuDescription,
+            align    = "left",
+            elements = options,
+        },
+    
+        function(data, menu)
+    
+            if (data.current.value == "backup") then
+                CloseMenuProperly()
+    
+            elseif (data.current.value == 'storage') then
+    
+                local hasPermission = HasStoragePermission()
+    
+                if hasPermission then
+    
+                    local containerId = Config.Societies[PlayerData.Job].Locations[CurrentLocationIndex].InventoryContainer.containerId
+    
+                    if containerId == false then
+                        SendNotification(nil, Locales['STORAGE_INVALID'], "error")
+                        return
+                    end
+    
+                    CloseMenuProperly()
+    
+                    Wait(250)
+    
+                    TriggerEvent("tpz_inventory:openInventoryContainerById", containerId, Config.Societies[PlayerData.Job].InventoryContainerTitle, false)
+    
+                else
+                    SendNotification(nil, Locales['INSUFFICIENT_PERMISSIONS'], "error")
+                end
+    
+            elseif (data.current.value == 'employees') then
+    
+                local bossGrade = Config.Societies[PlayerData.Job].BossGrade
+    
+                if PlayerData.JobGrade ~= bossGrade then
+                    SendNotification(nil, Locales['INSUFFICIENT_PERMISSIONS'], "error")
                     return
                 end
-
-                CloseMenuProperly()
-
-                Wait(250)
-
-                TriggerEvent("tpz_inventory:openInventoryContainerById", containerId, Config.Societies[PlayerData.Job].InventoryContainerTitle, false)
-
-            else
-                SendNotification(nil, Locales['INSUFFICIENT_PERMISSIONS'], "error")
+    
+                OpenSocietyEmployeesList()
+    
+            elseif (data.current.value == 'ledger') then
+                
+                local bossGrade = Config.Societies[PlayerData.Job].BossGrade
+    
+                if PlayerData.JobGrade ~= bossGrade then
+                    SendNotification(nil, Locales['INSUFFICIENT_PERMISSIONS'], "error")
+                    return
+                end
+    
+                OpenSocietyLedgerMenu()
             end
-
-        elseif (data.current.value == 'employees') then
-
-            local bossGrade = Config.Societies[PlayerData.Job].BossGrade
-
-            if PlayerData.JobGrade ~= bossGrade then
-                SendNotification(nil, Locales['INSUFFICIENT_PERMISSIONS'], "error")
-                return
-            end
-
-            OpenSocietyEmployeesList()
-
-        elseif (data.current.value == 'ledger') then
-            
-            local bossGrade = Config.Societies[PlayerData.Job].BossGrade
-
-            if PlayerData.JobGrade ~= bossGrade then
-                SendNotification(nil, Locales['INSUFFICIENT_PERMISSIONS'], "error")
-                return
-            end
-
-            OpenSocietyLedgerMenu()
-        elseif (data.current.value == "store") then
-
-            local storeName = Config.Societies[PlayerData.Job].Store.StoreIndexName
-
+    
+    
+        end,
+    
+        function(data, menu)
             CloseMenuProperly()
+        end)
 
-            Wait(500)
-            exports.tpz_stores:OpenStoreByName(storeName)
-         end
-    end,
-
-    function(data, menu)
-        CloseMenuProperly()
     end)
 end
 
@@ -427,3 +437,4 @@ function OpenSocietyLedgerMenu()
     end)
 
 end
+
