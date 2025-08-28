@@ -78,7 +78,7 @@ Locales = {
     ['SOCIETY_REGISTERED']                    = "Successfully registed a new society job.",
 
     -- [1] %s : days left, [2] %s : total days, [3] %s : amount tax cost
-    ['MENU_DESCRIPTION_TAX']                  = "%s / %s Days left to pay for the society tax.</br></br>The cost for the tax is %s dollars.</br>", -- </br> creates new line.
+    ['MENU_DESCRIPTION_TAX']                  = "(%s) Days left to pay for the society tax.</br></br>The cost for the tax is %s dollars.</br>", -- </br> creates new line.
     
     ['DUTY_TOGGLE_ON'] = { 
         title = "Duty", 
@@ -94,4 +94,5 @@ Locales = {
         duration = 3
     },
 }
+
 
