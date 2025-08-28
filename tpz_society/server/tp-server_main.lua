@@ -80,7 +80,11 @@ AddEventHandler('onResourceStart', function(resourceName)
         local tableLength = TPZ.GetTableLength(result)
 
         if tableLength > 0 then
-            for _, res in pairs (result) do Societies[res.job] = {} Societies[res.job] = res end
+
+            for _, res in pairs (result) do 
+                Societies[res.job] = {} 
+                Societies[res.job] = res 
+            end
 
             print("Successfully registered (" .. tableLength .. ') societies.')
         end
@@ -372,6 +376,64 @@ Citizen.CreateThread(function()
             
         end
 
+    end
+
+end)
+
+Citizen.CreateThread(function()
+    while true do
+
+        Wait(60000 * Config.TaxUpdateDuration)
+
+        if Societies and TPZ.GetTableLength(Societies) > 0 then
+                
+            for _, society in pairs (Societies) do
+
+                if Config.Societies[society.job].Tax.Enabled then
+              
+                    local SocietyData = Config.Societies[society.job]
+                    
+                    society.tax_duration = society.tax_duration + Config.TaxUpdateDuration
+    
+                    local paymentDuration = (SocietyData.Tax.PaymentDuration * 1440)
+      
+                    if society.tax_duration >= paymentDuration then
+      
+                        society.tax_duration = 0
+    
+                        if society.ledger < SocietyData.PayAmount then
+    
+                            -- we kick all employees and boss online and offline users if the ledger could not pay the tax.
+                            local JobPlayers = GetJobPlayers(society.job)
+    
+                            if JobPlayers.count > 0 then
+    
+                                for _, player in pairs(JobPlayers.players) do
+    
+                                    player.source = tonumber(player.source)
+    
+                                    TPZ.GetPlayer(player.source).setJob('unemployed')
+                                    TPZ.GetPlayer(player.source).setJobGrade(0)
+                                       
+                                end
+                            end
+    
+                            local Parameters = { ['job'] = society.job, ['jobGrade'] = 0 }
+                            exports.ghmattimysql:execute("UPDATE `characters` SET `job` = 'unemployed', `jobGrade` = @jobGrade WHERE job = @job", Parameters)
+                          
+                        end
+    
+                    else
+                        society.ledger = society.ledger - SocietyData.PayAmount
+                    end
+    
+                end
+    
+    
+            end
+
+        end
+        
     end
 
 end)
