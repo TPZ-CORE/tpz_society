@@ -404,7 +404,7 @@ Citizen.CreateThread(function()
                         if society.ledger < SocietyData.PayAmount then
     
                             -- we kick all employees and boss online and offline users if the ledger could not pay the tax.
-                            local JobPlayers = GetJobPlayers(society.job)
+                            local JobPlayers = TPZ.GetJobPlayers(society.job)
     
                             if JobPlayers.count > 0 then
     
@@ -437,3 +437,4 @@ Citizen.CreateThread(function()
     end
 
 end)
+
