@@ -86,7 +86,7 @@ function OpenSocietyManagementMenu(index)
     
         if Config.Societies[PlayerData.Job].Tax.Enabled then
             local getTaxTime = GetTaxTime(result.tax_duration)
-            menuDescription  = string.format(Locales['MENU_DESCRIPTION_TAX'], getTaxTime, Config.Societies[PlayerData.Job].Tax.PaymentDuration, Config.Societies[PlayerData.Job].Tax.PayAmount)
+            menuDescription  = string.format(Locales['MENU_DESCRIPTION_TAX'], getTaxTime, Config.Societies[PlayerData.Job].Tax.PayAmount)
         end
     
         MenuData.Open('default', GetCurrentResourceName(), 'main_menu',
@@ -437,4 +437,5 @@ function OpenSocietyLedgerMenu()
     end)
 
 end
+
 
