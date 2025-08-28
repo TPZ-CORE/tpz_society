@@ -389,7 +389,6 @@ Citizen.CreateThread(function()
                 
             for _, society in pairs (Societies) do
 
-                print(society.job)
                 if Config.Societies[society.job] and Config.Societies[society.job].Tax.Enabled then
               
                     local SocietyData = Config.Societies[society.job]
@@ -438,4 +437,5 @@ Citizen.CreateThread(function()
     end
 
 end)
+
 
