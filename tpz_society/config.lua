@@ -40,6 +40,8 @@ Config.RegisterSociety = {
     DiscordRoles  = { 111111111111, 22222222222222 },
 }
 
+-- How often should the system update the tax? (10 by default is okay).
+Config.TaxUpdateDuration = 10 -- The update time in minutes.
 
 -----------------------------------------------------------
 --[[ Society Locations ]]--
@@ -126,6 +128,13 @@ Config.Societies = {
             },
         }, 
 
+        Tax = {
+            Enabled = false, -- FALSE BY DEFAULT FOR POLICE
+
+            PaymentDuration = 7, -- By default, every 7 days for the repo tax payment.
+            PayAmount = 30, -- Must be paying 30 dollars every 7 days by default.
+        },
+        
         BossGrade      = 3, -- The boss grade which will be able to manage all society actions. 
         RecruitGrade   = 0, -- The recruit grade when someone is hiring a player to the job.
 
@@ -213,7 +222,14 @@ Config.Societies = {
                 [1] = { Salary = 5 },
             },
         }, 
+        
+        Tax = {
+            Enabled = false, -- FALSE BY DEFAULT FOR MEDICS
 
+            PaymentDuration = 7, -- By default, every 7 days for the repo tax payment.
+            PayAmount = 30, -- Must be paying 30 dollars every 7 days by default.
+        },
+        
         BossGrade      = 1, -- The boss grade which will be able to manage all society actions. 
         RecruitGrade   = 0, -- The recruit grade when someone is hiring a player to the job.
 
@@ -260,3 +276,4 @@ function SendNotification(source, message, messageType)
     end
   
 end
+
