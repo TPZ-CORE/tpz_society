@@ -389,7 +389,8 @@ Citizen.CreateThread(function()
                 
             for _, society in pairs (Societies) do
 
-                if Config.Societies[society.job].Tax.Enabled then
+                print(society.job)
+                if Config.Societies[society.job] and Config.Societies[society.job].Tax.Enabled then
               
                     local SocietyData = Config.Societies[society.job]
                     
@@ -401,7 +402,7 @@ Citizen.CreateThread(function()
       
                         society.tax_duration = 0
     
-                        if society.ledger < SocietyData.PayAmount then
+                        if society.ledger < SocietyData.Tax.PayAmount then
     
                             -- we kick all employees and boss online and offline users if the ledger could not pay the tax.
                             local JobPlayers = TPZ.GetJobPlayers(society.job)
@@ -424,7 +425,7 @@ Citizen.CreateThread(function()
                         end
     
                     else
-                        society.ledger = society.ledger - SocietyData.PayAmount
+                        society.ledger = society.ledger - SocietyData.Tax.PayAmount
                     end
     
                 end
@@ -433,7 +434,7 @@ Citizen.CreateThread(function()
             end
 
         end
-        
+
     end
 
 end)
