@@ -402,6 +402,8 @@ Citizen.CreateThread(function()
                         society.tax_duration = 0
     
                         if society.ledger < SocietyData.Tax.PayAmount then
+
+                            society.ledger = 0
     
                             -- we kick all employees and boss online and offline users if the ledger could not pay the tax.
                             local JobPlayers = TPZ.GetJobPlayers(society.job)
@@ -421,10 +423,11 @@ Citizen.CreateThread(function()
                             local Parameters = { ['job'] = society.job, ['jobGrade'] = 0 }
                             exports.ghmattimysql:execute("UPDATE `characters` SET `job` = 'unemployed', `jobGrade` = @jobGrade WHERE job = @job", Parameters)
                           
+                            
+                        else
+                            society.ledger = society.ledger - SocietyData.Tax.PayAmount
                         end
-    
-                    else
-                        society.ledger = society.ledger - SocietyData.Tax.PayAmount
+
                     end
     
                 end
@@ -437,5 +440,4 @@ Citizen.CreateThread(function()
     end
 
 end)
-
 
