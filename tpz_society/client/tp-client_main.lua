@@ -41,7 +41,8 @@ AddEventHandler("tpz_core:isPlayerReady", function()
     
     TriggerServerEvent('tpz_society:server:registerConnectedPlayer')
     TriggerServerEvent("tpz_society:server:addChatSuggestions")
-        
+    TriggerEvent('tpz_society:client:start_duty_thread')
+    
     TogglePlayerDutyOnJoin()
 
 end)
@@ -69,7 +70,8 @@ if Config.DevMode then
     
         TriggerServerEvent('tpz_society:server:registerConnectedPlayer')
         TriggerServerEvent("tpz_society:server:addChatSuggestions")
-        
+        TriggerEvent('tpz_society:client:start_duty_thread')
+
         TogglePlayerDutyOnJoin()
 
     end)
@@ -80,6 +82,10 @@ RegisterNetEvent("tpz_core:getPlayerJob")
 AddEventHandler("tpz_core:getPlayerJob", function(data)
     PlayerData.Job      = data.job
     PlayerData.JobGrade = data.jobGrade
+
+    TriggerEvent('tpz_society:client:start_duty_thread')
+
+
 end)
 
 -----------------------------------------------------------
