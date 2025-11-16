@@ -40,12 +40,12 @@ local CloseMenuProperly = function ()
     CurrentLocationIndex = nil
 end
 
-local GetTaxTime = function(taxTime)
+local GetTaxTime = function(taxTime, maxDays)
     -- taxTime is in minutes, convert to days
     local daysPassed = math.floor(taxTime / 1440)
 
     -- we want remaining days instead of passed days
-    local daysLeft = 7 - daysPassed
+    local daysLeft = maxDays - daysPassed
 
     -- never go below 0
     if daysLeft < 0 then
@@ -437,6 +437,7 @@ function OpenSocietyLedgerMenu()
     end)
 
 end
+
 
 
 
