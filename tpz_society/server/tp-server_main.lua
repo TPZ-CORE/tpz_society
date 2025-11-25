@@ -230,8 +230,14 @@ end)
 -- The specified event is triggered when being in the society menu to add money on the ledger account.
 RegisterServerEvent("tpz_society:server:depositJobLedger")
 AddEventHandler("tpz_society:server:depositJobLedger", function(job, quantity)
-    local _source    = source
-    local xPlayer    = TPZ.GetPlayer(_source)
+    local _source = source
+    local xPlayer = TPZ.GetPlayer(_source)
+
+    if xPlayer.hasLostConnection() then 
+        print(string.format('A player with the steam name as: %s and online id: %s, attempted to deposit money on a society ledger while his connection is lost.', GetPlayerName(_source), _source))
+        return 
+    end
+
     local PlayerData = GetPlayerData(_source)
 
     if ( job == nil ) or ( Societies[job] == nil ) or ( Config.Societies[job] == nil ) or ( job ~= PlayerData.job ) or ( Config.Societies[job] and Config.Societies[job].BossGrade ~= PlayerData.jobGrade ) then
@@ -274,9 +280,14 @@ end)
 -- The specified event is triggered when being in the society menu to withdraw money from the ledger account.
 RegisterServerEvent("tpz_society:server:withdrawJobLedger")
 AddEventHandler("tpz_society:server:withdrawJobLedger", function(job, quantity)
-    local _source    = source
+    local _source = source
+    local xPlayer = TPZ.GetPlayer(_source)
 
-    local xPlayer    = TPZ.GetPlayer(_source)
+    if xPlayer.hasLostConnection() then 
+        print(string.format('A player with the steam name as: %s and online id: %s, attempted to withdraw money from a society ledger while his connection is lost.', GetPlayerName(_source), _source))
+        return 
+    end
+
     local PlayerData = GetPlayerData(_source)
 
     if ( job == nil ) or ( Societies[job] == nil ) or ( Config.Societies[job] == nil ) or ( job ~= PlayerData.job ) or ( Config.Societies[job] and Config.Societies[job].BossGrade ~= PlayerData.jobGrade ) then
@@ -440,4 +451,5 @@ Citizen.CreateThread(function()
     end
 
 end)
+
 
