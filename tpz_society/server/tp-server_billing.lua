@@ -74,7 +74,7 @@ function CreateNewBill(source, targetId, isJob, cost, reason, issuer)
   local _source   = source
   local _tsource  = tonumber(targetId)
 
-  if TPZ.GetPlayer(_tsource).loaded() then
+  if not TPZ.GetPlayer(_tsource).loaded() then
     SendNotification(_source, Locales['PLAYER_NOT_AVAILABLE'], "error")
     return
   end
@@ -212,3 +212,4 @@ RegisterServerEvent('tpz_society:server:onPaidBill')
 AddEventHandler('tpz_society:server:onPaidBill', function(data)
   -- todo nothing, we only register it here.
 end)
+
