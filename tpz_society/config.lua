@@ -145,9 +145,8 @@ Config.Societies = {
             [3] = "Boss",
         },
         
-        Webhooking = { 
+        Webhooking = { -- (!) Checkout tpz_core/server/discord/webhooks.lua to modify the webhook urls.
             Enabled = false, -- Set it to false if you dont use any webhook, otherwise all the society actions will be sent to the webhook url.
-            Url = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", 
             Color = 10038562,
         },
 
@@ -238,9 +237,8 @@ Config.Societies = {
             [1] = "Boss",
         },
         
-        Webhooking = { 
+        Webhooking = { -- (!) Checkout tpz_core/server/discord/webhooks.lua to modify the webhook urls.
             Enabled = false, -- Set it to false if you dont use any webhook, otherwise all the society actions will be sent to the webhook url.
-            Url = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", 
             Color = 10038562,
         },
 
@@ -250,12 +248,12 @@ Config.Societies = {
 -----------------------------------------------------------
 --[[ Webhooking (Only DevTools - Injection Cheat Logs) ]]--
 -----------------------------------------------------------
+-- (!) Checkout tpz_core/server/discord/webhooks.lua to modify the webhook urls.
 
 Config.Webhooks = {
     
     ['DEVTOOLS_INJECTION_CHEAT'] = { -- Warnings and Logs about players who used or atleast tried to use devtools injection.
         Enabled = false, 
-        Url = "", 
         Color = 10038562,
     },
 
@@ -276,4 +274,5 @@ function SendNotification(source, message, messageType)
     end
   
 end
+
 
