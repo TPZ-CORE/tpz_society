@@ -107,7 +107,7 @@ AddEventHandler("tpz_society:server:setSelectedSourceIdGrade", function(job, use
     if ( job == nil ) or ( Societies[job] == nil ) or ( Config.Societies[job] == nil ) or ( job ~= PlayerData.job ) or ( Config.Societies[job] and Config.Societies[job].BossGrade ~= PlayerData.jobGrade ) then
 
         if Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Enabled then
-            local _w, _c      = Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Url, Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Color
+            local _w, _c      = TPZ.GetWebhookUrl("tpz_society", "DEVTOOLS_INJECTION_CHEAT"), Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Color
             local description = 'The specified user attempted to use devtools / injection or netbug cheat on society withdraw job ledger.'
             TPZ.SendToDiscordWithPlayerParameters(_w, Locales['DEVTOOLS_INJECTION_DETECTED_TITLE_LOG'], _source, PlayerData.steamName, PlayerData.username, PlayerData.identifier, PlayerData.charIdentifier, description, _c)
         end
@@ -143,7 +143,7 @@ AddEventHandler("tpz_society:server:server:hireSelectedSourceId", function(job, 
     if ( job == nil ) or ( Societies[job] == nil ) or ( Config.Societies[job] == nil ) or ( job ~= PlayerData.job ) or ( Config.Societies[job] and Config.Societies[job].BossGrade ~= PlayerData.jobGrade ) then
 
         if Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Enabled then
-            local _w, _c      = Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Url, Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Color
+            local _w, _c      = TPZ.GetWebhookUrl("tpz_society", "DEVTOOLS_INJECTION_CHEAT"), Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Color
             local description = 'The specified user attempted to use devtools / injection or netbug cheat on society withdraw job ledger.'
             TPZ.SendToDiscordWithPlayerParameters(_w, Locales['DEVTOOLS_INJECTION_DETECTED_TITLE_LOG'], _source, PlayerData.steamName, PlayerData.username, PlayerData.identifier, PlayerData.charIdentifier, description, _c)
         end
@@ -172,8 +172,8 @@ AddEventHandler("tpz_society:server:server:hireSelectedSourceId", function(job, 
     if webhookData.Enabled then
         local title       = "💼` " .. Config.Societies[job].JobLabel .. " - Hired New Employee `"
         local description = string.format('The specified user hired a new employee: `(Username: %s, Identifier: %s, Char Identifier: %s)` to the mentioned department.', PlayerTargetData.username, PlayerTargetData.identifier, PlayerTargetData.charIdentifier)
-
-        TPZ.SendToDiscordWithPlayerParameters( webhookData.Url, title, _source, PlayerData.steamName, PlayerData.username, PlayerData.identifier, PlayerData.charIdentifier, description, webhookData.Color)
+        local url = TPZ.GetWebhookUrl("tpz_society", job)
+        TPZ.SendToDiscordWithPlayerParameters( url, title, _source, PlayerData.steamName, PlayerData.username, PlayerData.identifier, PlayerData.charIdentifier, description, webhookData.Color)
 
     end
 
@@ -192,7 +192,7 @@ AddEventHandler("tpz_society:server:fireSelectedSourceId", function(job, usernam
     if ( job == nil ) or ( Societies[job] == nil ) or ( Config.Societies[job] == nil ) or ( job ~= PlayerData.job ) or ( Config.Societies[job] and Config.Societies[job].BossGrade ~= PlayerData.jobGrade ) then
 
         if Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Enabled then
-            local _w, _c      = Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Url, Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Color
+            local _w, _c      = TPZ.GetWebhookUrl("tpz_society", "DEVTOOLS_INJECTION_CHEAT"), Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Color
             local description = 'The specified user attempted to use devtools / injection or netbug cheat on society withdraw job ledger.'
             TPZ.SendToDiscordWithPlayerParameters(_w, Locales['DEVTOOLS_INJECTION_DETECTED_TITLE_LOG'], _source, PlayerData.steamName, PlayerData.username, PlayerData.identifier, PlayerData.charIdentifier, description, _c)
         end
@@ -221,8 +221,8 @@ AddEventHandler("tpz_society:server:fireSelectedSourceId", function(job, usernam
     if webhookData.Enabled then
         local title       = "💼` " .. Config.Societies[job].JobLabel .. " - Fired Employee `"
         local description = string.format('The specified user fired an employee: `(Username: %s, Identifier: %s, Char Identifier: %s)` from the mentioned department.', PlayerTargetData.username, PlayerTargetData.identifier, PlayerTargetData.charIdentifier)
-
-        TPZ.SendToDiscordWithPlayerParameters( webhookData.Url, title, _source, PlayerData.steamName, PlayerData.username, PlayerData.identifier, PlayerData.charIdentifier, description, webhookData.Color)
+        local url = TPZ.GetWebhookUrl("tpz_society", job)
+        TPZ.SendToDiscordWithPlayerParameters( url, title, _source, PlayerData.steamName, PlayerData.username, PlayerData.identifier, PlayerData.charIdentifier, description, webhookData.Color)
     end
 
 end)
@@ -243,7 +243,7 @@ AddEventHandler("tpz_society:server:depositJobLedger", function(job, quantity)
     if ( job == nil ) or ( Societies[job] == nil ) or ( Config.Societies[job] == nil ) or ( job ~= PlayerData.job ) or ( Config.Societies[job] and Config.Societies[job].BossGrade ~= PlayerData.jobGrade ) then
 
         if Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Enabled then
-            local _w, _c      = Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Url, Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Color
+            local _w, _c      = TPZ.GetWebhookUrl("tpz_society", "DEVTOOLS_INJECTION_CHEAT"), Config.Webhooks['DEVTOOLS_INJECTION_CHEAT'].Color
             local description = 'The specified user attempted to use devtools / injection or netbug cheat on society withdraw job ledger.'
             TPZ.SendToDiscordWithPlayerParameters(_w, Locales['DEVTOOLS_INJECTION_DETECTED_TITLE_LOG'], _source, PlayerData.steamName, PlayerData.username, PlayerData.identifier, PlayerData.charIdentifier, description, _c)
         end
@@ -270,8 +270,8 @@ AddEventHandler("tpz_society:server:depositJobLedger", function(job, quantity)
     if webhookData.Enabled then
         local title       = "💼` " .. Config.Societies[job].JobLabel .. " - Ledger Deposit `"
         local description = string.format('The specified user deposited to the mentioned department %s dollars.', quantity)
-
-        TPZ.SendToDiscordWithPlayerParameters( webhookData.Url, title, _source, PlayerData.steamName, PlayerData.username, PlayerData.identifier, PlayerData.charIdentifier, description, webhookData.Color)
+        local url = TPZ.GetWebhookUrl("tpz_society", job)
+        TPZ.SendToDiscordWithPlayerParameters( url, title, _source, PlayerData.steamName, PlayerData.username, PlayerData.identifier, PlayerData.charIdentifier, description, webhookData.Color)
 
     end
 
@@ -451,5 +451,6 @@ Citizen.CreateThread(function()
     end
 
 end)
+
 
 
